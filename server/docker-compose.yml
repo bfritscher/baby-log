@@ -1,0 +1,13 @@
+version: "3"
+services:
+  couchdb:
+    container_name: baby-tracker-couchdb
+    image: couchdb
+    ports:
+      - "5984:5984"
+    volumes:
+      - ./etc:/opt/couchdb/etc/local.d/
+      - ./data:/opt/couchdb/data
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=admin
