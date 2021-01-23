@@ -123,15 +123,15 @@ export default {
   }
 };
 
-// calendar logs + add on this day
 // all logs group by day
 // loading more? / limit loading: on all logs
+// calendar logs
 // Layouts
 // about with license of images
 // test offline mode
 
 // basic stats graphs
-// icons for events without duration
+// schedule graph icons for events without duration?
 // legends
 
 // [future maybe]

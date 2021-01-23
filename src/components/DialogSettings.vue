@@ -52,8 +52,7 @@
         v-model="importFile"
         @change="importAmila($event)"
       ></v-file-input>
-      / import other preference?<br />
-      about/ licenses<br />
+      <br />
       <v-text-field
         label="Weight"
         :value="$store.state.config.units.weight"
@@ -78,6 +77,11 @@
         @change="$store.commit('setUnits', { temperature: $event })"
       >
       </v-text-field>
+
+      about/ licenses<br />
+      Icons designed by Freepik, bqlqn, Vitaly Gorbachev, Vectors Market,
+      Google, Those Icons, Good Ware, hirschwolf from Flaticon Application
+      inspired by Baby tracker - feeding, sleep and diaper from Amila
       <v-list three-line subheader>
         <v-subheader>User Con trols</v-subheader>
         <v-list-item>

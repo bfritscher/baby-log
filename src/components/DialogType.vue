@@ -83,7 +83,7 @@
         <v-btn @click="currentSubtype = undefined">Cancel</v-btn>
       </div>
       // TODO make stick
-      <div v-for="day in timelineRecordsPaged" :key="day.day.toString()">
+      <div v-for="(day, i) in timelineRecordsPaged" :key="i">
         <p>{{ day.day }}</p>
         <v-timeline dense align-top>
           <template v-for="(record, i) in day.records">
@@ -123,6 +123,7 @@
                     >
                       {{ record.amount }}{{ record.unit }}
                     </span>
+                    {{ record.details }}
                   </div>
                 </v-col>
               </v-row>

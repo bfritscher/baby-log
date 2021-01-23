@@ -11,6 +11,22 @@
     ></v-date-picker>
     <day-summary :day="day"></day-summary>
     // TODO show records for a day
+    <v-btn
+      v-for="type in $store.state.config.types"
+      :key="type.id"
+      :color="type.color"
+      @click.stop="
+        $store.commit('updateUI', {
+          showRecordDialog: {
+            type: type.id,
+            fromDate: `${day}T12:00:00`,
+            toDate: `${day}T12:00:00`
+          }
+        })
+      "
+    >
+      <v-icon v-text="type.icon"></v-icon>
+    </v-btn>
   </div>
 </template>
 

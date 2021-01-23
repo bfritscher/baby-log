@@ -1,4 +1,3 @@
-const { plugins } = require("chart.js");
 const { InjectManifest } = require("workbox-webpack-plugin");
 
 const webpackPlugins = [];

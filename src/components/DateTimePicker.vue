@@ -36,7 +36,6 @@
       <template v-slot:activator="{ on, attrs }">
         <v-text-field
           v-model="date"
-          label="Picker in dialog"
           prepend-icon="mdi-calendar"
           readonly
           v-bind="attrs"
@@ -55,6 +54,10 @@
 </template>
 
 <script>
+function isValidDate(d) {
+  return d instanceof Date && !isNaN(d);
+}
+
 export default {
   name: "DateTimePicker",
   props: ["label", "value"],
@@ -67,8 +70,13 @@ export default {
   computed: {
     time: {
       get() {
-        const date = new Date(this.value);
-        return `${date.getHours()}:${date.getMinutes()}`;
+        let date = new Date(this.value);
+        if (!isValidDate(date)) {
+          date = new Date();
+        }
+        return `${("0" + date.getHours()).slice(-2)}:${(
+          "0" + date.getMinutes()
+        ).slice(-2)}`;
       },
       set(time) {
         const date = new Date(this.value);
@@ -78,13 +86,27 @@ export default {
     },
     date: {
       get() {
-        return this.value.split("T")[0];
+        let dateString = this.value;
+        const date = new Date(dateString);
+        if (!isValidDate(date)) {
+          dateString = new Date().toISOString();
+        }
+        return dateString.split("T")[0];
       },
       set(dateString) {
-        const time = this.value.split("T")[1];
+        let time;
+        try {
+          time = this.value.split("T")[1];
+        } catch (e) {
+          time = undefined;
+        }
+        if (!time) {
+          time = "12:00:00.00Z";
+        }
         this.$emit("input", dateString + "T" + time);
       }
     }
   }
 };
 </script>
+;
