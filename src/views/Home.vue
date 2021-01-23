@@ -126,19 +126,19 @@ export default {
 // calendar logs + add on this day
 // all logs group by day
 // loading more? / limit loading: on all logs
-// test offline mode
 // Layouts
 // about with license of images
-// TODO logo
-// readme captures
+// test offline mode
+
 // basic stats graphs
 // icons for events without duration
 // legends
 
 // [future maybe]
-// support category? other name? subsubtype?
 // daily reminder vitamin D
 // alarms
+// readme captures
+// support category? other name? subsubtype?
 
 // notifications
 // https://developers.google.com/web/fundamentals/push-notifications/display-a-notification

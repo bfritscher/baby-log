@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <v-app-bar app>
+      <v-img contain src="@/assets/logo.svg" height="50" width="50"></v-img>
       <v-select
         :items="$store.state.children"
         item-text="name"

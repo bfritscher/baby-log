@@ -1,34 +1,28 @@
-/* eslint-disable no-console */
-
-import { register } from "register-service-worker";
+import { Workbox, messageSW } from "workbox-window";
 
 if (process.env.NODE_ENV === "production") {
-  register(`${process.env.BASE_URL}service-worker.js`, {
-    ready() {
-      console.log(
-        "App is being served from cache by a service worker.\n" +
-          "For more details, visit https://goo.gl/AFskqB"
-      );
-    },
-    registered() {
-      console.log("Service worker has been registered.");
-    },
-    cached() {
-      console.log("Content has been cached for offline use.");
-    },
-    updatefound() {
-      console.log("New content is downloading.");
-    },
-    updated() {
-      console.log("New content is available; please refresh.");
-    },
-    offline() {
-      console.log(
-        "No internet connection found. App is running in offline mode."
-      );
-    },
-    error(error) {
-      console.error("Error during service worker registration:", error);
-    }
-  });
+  if ("serviceWorker" in navigator) {
+    const wb = new Workbox(`${process.env.BASE_URL}service-worker.js`);
+    let registration;
+
+    const forceUpdate = () => {
+      wb.addEventListener("controlling", () => {
+        window.location.reload();
+      });
+
+      if (registration && registration.waiting) {
+        // Send a message to the waiting service worker,
+        // instructing it to activate.
+        // Note: for this to work, you have to add a message
+        // listener in your service worker. See below.
+        messageSW(registration.waiting, { type: "SKIP_WAITING" });
+      }
+    };
+
+    // Add an event listener to detect when the registered
+    // service worker has installed but is waiting to activate.
+    wb.addEventListener("waiting", forceUpdate);
+    wb.addEventListener("externalwaiting", forceUpdate);
+    wb.register().then((r) => (registration = r));
+  }
 }
