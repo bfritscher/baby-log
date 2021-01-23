@@ -11,6 +11,7 @@
           create ? "Add Child" : "Edit Child"
         }}</v-toolbar-title>
         <v-spacer></v-spacer>
+        <span v-if="!create">id: {{ child.id }}</span>
       </v-toolbar>
       <v-card-text>
         <v-container v-if="child">
