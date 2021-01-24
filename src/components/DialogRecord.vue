@@ -23,6 +23,7 @@
             :items="type.subtypes"
             item-text="name"
             item-value="id"
+            :rules="[rules.required]"
           ></v-select>
           <v-text-field
             v-if="subtype.withAmount"
@@ -48,7 +49,14 @@
         <v-btn text @click="remove()" v-if="!create"> Delete </v-btn>
         <v-spacer></v-spacer>
         <v-btn text @click="cancel()"> Cancel </v-btn>
-        <v-btn color="primary" text @click="save()"> Save </v-btn>
+        <v-btn
+          color="primary"
+          text
+          @click="save()"
+          :disabled="!currentRecord.subtype"
+        >
+          Save
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -66,7 +74,10 @@ export default {
   },
   data() {
     return {
-      currentRecord: {}
+      currentRecord: {},
+      rules: {
+        required: (value) => !!value || "Required."
+      }
     };
   },
   computed: {
