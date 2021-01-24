@@ -1,6 +1,12 @@
 <template>
   <div>
-    <div v-for="group in dayGroup" :key="group.type">
+    <div
+      v-for="group in dayGroup"
+      :key="group.type"
+      @click.stop="
+        $store.commit('updateUI', { showTypeDialog: typeLookup[group.type] })
+      "
+    >
       <v-icon
         v-text="typeLookup[group.type].icon"
         :style="{ 'background-color': typeLookup[group.type].color }"

@@ -77,7 +77,26 @@
         @change="$store.commit('setUnits', { temperature: $event })"
       >
       </v-text-field>
-
+      <v-btn
+        @click.stop="
+          $store.commit('updateUI', {
+            showAlarmDialog: { type: 'FEEDING', enabled: true }
+          })
+        "
+      >
+        Add alarm
+      </v-btn>
+      <div
+        v-for="alarm in alarms"
+        :key="alarm.id"
+        @click.stop="
+          $store.commit('updateUI', {
+            showAlarmDialog: alarm
+          })
+        "
+      >
+        {{ alarm.type }} {{ alarm.subtype }} {{ alarm.details }}
+      </div>
       about/ licenses<br />
       Icons designed by Freepik, bqlqn, Vitaly Gorbachev, Vectors Market,
       Google, Those Icons, Good Ware, hirschwolf from Flaticon Application
@@ -146,6 +165,7 @@
   </v-dialog>
 </template>
 <script>
+import { mapGetters } from "vuex";
 import DialogChild from "@/components/DialogChild";
 import { saveAs } from "file-saver";
 import DatabaseService from "@/services/Database";
@@ -165,6 +185,9 @@ export default {
       sound: false,
       widgets: false
     };
+  },
+  computed: {
+    ...mapGetters(["alarms"])
   },
   methods: {
     async exportDB() {

@@ -20,6 +20,7 @@
     </v-app-bar>
     <dialog-type></dialog-type>
     <dialog-record></dialog-record>
+    <dialog-alarm></dialog-alarm>
     <v-main v-if="$store.state.children.length > 0">
       <v-tabs v-model="tab" fixed-tabs>
         <v-tabs-slider></v-tabs-slider>
@@ -61,6 +62,7 @@ import Calendar from "@/views/Calendar";
 import DialogSettings from "@/components/DialogSettings";
 import DialogRecord from "@/components/DialogRecord";
 import DialogType from "@/components/DialogType";
+import DialogAlarm from "@/components/DialogAlarm";
 
 export default {
   name: "App",
@@ -80,7 +82,8 @@ export default {
     Calendar,
     DialogSettings,
     DialogRecord,
-    DialogType
+    DialogType,
+    DialogAlarm
   }
 };
 </script>

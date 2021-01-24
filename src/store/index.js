@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import { nanoid } from "nanoid";
+import moment from "moment";
 import DatabaseService from "../services/Database";
 import recordSchema from "../schemas/record";
 import childSchema from "../schemas/child";
@@ -31,7 +32,8 @@ const store = new Vuex.Store({
   state: {
     ui: {
       showTypeDialog: false,
-      showRecordDialog: false
+      showRecordDialog: false,
+      showAlarmDialog: false
     },
     user: {
       id: "logged in id?"
@@ -289,17 +291,17 @@ const store = new Vuex.Store({
     timers(state) {
       return state.records.filter((record) => record.timer);
     },
-    latestActivity(state) {
+    latestActivityByType(state) {
       // based on hypothesis that records is already sorted desc and filtered by active child
       // latest record foreach type, stop when found one of each
-      const latestActivities = [];
+      const latestActivities = {};
       const notSeenTypes = state.config.types.map((type) => type.id);
       for (let i = 0; i < state.records.length; i++) {
         const record = state.records[i];
         if (record.timer) continue;
         const index = notSeenTypes.indexOf(record.type);
         if (index >= 0) {
-          latestActivities.push(record);
+          latestActivities[record.type] = record;
           notSeenTypes.splice(index, 1);
           if (notSeenTypes.length === 0) {
             break;
@@ -307,6 +309,81 @@ const store = new Vuex.Store({
         }
       }
       return latestActivities;
+    },
+    latestActivityBySubtype(state, getters) {
+      // based on hypothesis that records is already sorted desc and filtered by active child
+      // latest record foreach type, stop when found one of each
+      const latestActivities = {};
+      const notSeenSubtypes = Object.keys(getters.subtypeLookup);
+      for (let i = 0; i < state.records.length; i++) {
+        const record = state.records[i];
+        if (record.timer) continue;
+        const index = notSeenSubtypes.indexOf(record.subtype);
+        if (index >= 0) {
+          latestActivities[record.subtype] = record;
+          notSeenSubtypes.splice(index, 1);
+          if (notSeenSubtypes.length === 0) {
+            break;
+          }
+        }
+      }
+      return latestActivities;
+    },
+    alarms(state, getters) {
+      return (getters.activeChild && getters.activeChild.alarms) || [];
+    },
+    activeAlarms(state, getters) {
+      return getters.alarms.reduce((activeAlarms, alarm) => {
+        if (!alarm.enabled) {
+          return activeAlarms;
+        }
+        let latest;
+        if (alarm.subtype && alarm.details) {
+          latest = state.records.find((record) => {
+            return (
+              record.subtype === alarm.subtype &&
+              record.details === alarm.details
+            );
+          });
+        } else if (alarm.subtype) {
+          latest = getters.latestActivityBySubtype[alarm.subtype];
+        } else {
+          latest = getters.latestActivityByType[alarm.type];
+        }
+        if (!latest) {
+          activeAlarms.push(alarm);
+          return activeAlarms;
+        }
+        if (alarm.intervalType === "d") {
+          const latestDay = new Date(latest.fromDate);
+          latestDay.setHours(0, 0, 0, 0, 0);
+          const todayDay = new Date();
+          todayDay.setHours(0, 0, 0, 0, 0);
+          const diffDays =
+            (todayDay.getTime() - latestDay.getTime()) / (24 * 3600 * 1000);
+          console.log(diffDays);
+          if (diffDays - alarm.intervalAmount >= 0) {
+            activeAlarms.push(alarm);
+          }
+        }
+        if (alarm.intervalType === "h") {
+          const durationToNext =
+            new Date(latest.fromDate).getTime() +
+            alarm.intervalAmount * 3600 * 1000 -
+            new Date().getTime();
+          alarm.durationToNext = durationToNext;
+          alarm.durationToNextText = moment
+            .duration(durationToNext)
+            .humanize(true);
+          if (alarm.durationToNext < 0) {
+            alarm.durationToNextText =
+              "Late by " + moment.duration(durationToNext).humanize();
+          }
+
+          activeAlarms.push(alarm);
+        }
+        return activeAlarms;
+      }, []);
     }
   },
   mutations: {
@@ -350,6 +427,17 @@ const store = new Vuex.Store({
   },
   actions: {
     async createRecord(context, data) {
+      if (!data.fromDate) {
+        data.fromDate = new Date().toISOString();
+      }
+      if (
+        data.subtype &&
+        !data.toDate &&
+        context.getters.subtypeLookup[data.subtype].withTimer
+      ) {
+        data.timer = true;
+      }
+
       const db = await DatabaseService.get();
       data.id = "id" + nanoid(); // because not allowed to start with _
       data.childId = context.state.activeChildId;
@@ -456,8 +544,8 @@ const store = new Vuex.Store({
         });
     },
     setRemoteURL(context, url) {
-      this.commit("setRemoteURL", url);
-      this.dispatch("sync");
+      context.commit("setRemoteURL", url);
+      context.dispatch("sync");
     },
     async sync(context) {
       const db = await DatabaseService.get();

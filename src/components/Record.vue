@@ -9,6 +9,7 @@
     <span v-if="subtype.withAmount && record.amount"
       >, {{ record.amount }}{{ record.unit }}</span
     >
+    {{ record.details }}
     <span v-if="subtype.withTimer">, {{ record.duration() }}</span>
   </div>
 </template>

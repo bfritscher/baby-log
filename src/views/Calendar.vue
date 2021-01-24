@@ -5,7 +5,7 @@
       first-day-of-week="1"
       full-width
       no-title
-      :events="['2021-01-08']"
+      :events="events"
       event-color="green lighten-1"
       v-model="day"
     ></v-date-picker>
@@ -42,6 +42,16 @@ export default {
     return {
       day: new Date().toISOString()
     };
+  },
+  computed: {
+    events() {
+      const events = [];
+      const child = this.$store.getters.activeChild;
+      if (child && child.birthdate) {
+        events.push(child.birthdate);
+      }
+      return events;
+    }
   }
 };
 </script>

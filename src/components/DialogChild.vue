@@ -132,7 +132,8 @@ export default {
         {
           birthdate: undefined,
           gender: "",
-          name: ""
+          name: "",
+          alarms: []
         },
         value.toJSON()
       );

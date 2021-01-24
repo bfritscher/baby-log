@@ -17,6 +17,37 @@ const schema = {
     },
     gender: {
       type: "string"
+    },
+    alarms: {
+      type: "array",
+      uniqueItems: true,
+      items: {
+        type: "object",
+        properties: {
+          id: {
+            type: "string"
+          },
+          type: {
+            type: "string"
+          },
+          subtype: {
+            type: "string"
+          },
+          details: {
+            type: "string"
+          },
+          enabled: {
+            type: "boolean"
+          },
+          intervalAmount: {
+            type: "number"
+          },
+          intervalType: {
+            type: "string"
+          }
+        },
+        required: ["id", "type"]
+      }
     }
   },
   required: ["id", "name"],

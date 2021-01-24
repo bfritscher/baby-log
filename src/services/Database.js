@@ -25,6 +25,9 @@ addRxPlugin(RxDBReplicationPlugin);
 import { RxDBJsonDumpPlugin } from "rxdb/plugins/json-dump";
 addRxPlugin(RxDBJsonDumpPlugin);
 
+import { RxDBMigrationPlugin } from "rxdb/plugins/migration";
+addRxPlugin(RxDBMigrationPlugin);
+
 // always needed for replication with the node-server
 
 import * as PouchdbAdapterHttp from "pouchdb-adapter-http";

@@ -74,7 +74,9 @@
         v-model="details"
         v-if="showDetails"
       ></v-text-field>
-      <v-btn block v-if="timer" @click="endTimer()">Finish</v-btn>
+      <v-btn block v-if="timer" @click="endTimer()" :color="type.color"
+        >Finish</v-btn
+      >
 
       <div
         v-if="!timer && subtype && (subtype.withAmount || subtype.askDetail)"
@@ -267,7 +269,7 @@ export default {
         this.amount = 0;
       }
     },
-    selectSubtype(subtype) {
+    async selectSubtype(subtype) {
       this.currentSubtype = subtype;
       if (!subtype.withTimer && (subtype.withAmount || subtype.askDetail)) {
         if (subtype.askDetail) {
@@ -282,14 +284,10 @@ export default {
     async createRecord() {
       const record = {
         type: this.type.id,
-        subtype: this.subtype.id,
-        fromDate: new Date().toISOString()
+        subtype: this.subtype.id
       };
       if (this.details) {
         record.details = this.details;
-      }
-      if (this.subtype.withTimer) {
-        record.timer = true;
       }
       if (this.subtype.withAmount) {
         record.unit = this.unit;

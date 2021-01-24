@@ -30,9 +30,53 @@
       </div>
     </div>
     <v-card>
-      <h2>Latest activity</h2>
+      <h2>
+        Next Activities
+        <v-btn
+          icon
+          @click.stop="
+            $store.commit('updateUI', {
+              showAlarmDialog: { type: 'FEEDING', enabled: true }
+            })
+          "
+        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </h2>
+      <div
+        v-for="(alarm, i) in activeAlarms"
+        :key="i"
+        @click.stop="handleAlarmClick(alarm)"
+      >
+        <v-icon
+          v-text="
+            alarm.subtype
+              ? subtypeLookup[alarm.subtype].icon
+              : typeLookup[alarm.type].icon
+          "
+          :style="{ 'background-color': typeLookup[alarm.type].color }"
+        ></v-icon>
+        {{ typeLookup[alarm.type].name }}
+        <span v-if="alarm.subtype">{{
+          subtypeLookup[alarm.subtype].name
+        }}</span>
+        {{ alarm.details }} <b>{{ alarm.durationToNextText }}</b>
+        <v-btn
+          icon
+          @click.stop="
+            $store.commit('updateUI', {
+              showAlarmDialog: alarm
+            })
+          "
+        >
+          <v-icon>mdi-dots-vertical</v-icon>
+        </v-btn>
+      </div>
+    </v-card>
+    <v-card>
+      <h2>Latest activities</h2>
       <record
-        v-for="(record, i) in $store.getters.latestActivity"
+        v-for="(record, i) in $store.getters.latestActivityByType"
         :key="i"
         :record="record"
       ></record>
@@ -50,38 +94,6 @@
     <dialog-all-logs></dialog-all-logs>
   </div>
 </template>
-
-<style>
-.none {
-  color: #ec9d24;
-  color: #ffe0b2;
-  color: #fdb74d;
-
-  color: #2789cf;
-  color: #9dcff2;
-  color: #48a0dc;
-
-  color: #5d43b2;
-  color: #c3b9e4;
-  color: #7a62c9;
-
-  color: #129ea3;
-  color: #c1f3f5;
-  color: #17c6cc;
-
-  color: #42a15c;
-  color: #b2edc2;
-  color: #52c772;
-
-  color: #db7e4d;
-  color: #ffceb5;
-  color: #ff9259;
-
-  color: #f15540;
-  color: #fdd4cd;
-  color: #fd7059;
-}
-</style>
 
 <script>
 import { mapGetters } from "vuex";
@@ -106,19 +118,32 @@ export default {
     Timer,
     DaySummary
   },
-  methods: {
-    dialogType(type) {
-      this.currentType = type;
-      this.showTypeDialog = true;
-    }
-  },
   computed: {
-    ...mapGetters(["typeLookup", "subtypeLookup"]),
+    ...mapGetters(["typeLookup", "subtypeLookup", "activeAlarms"]),
     timers() {
       return this.$store.state.timers;
     },
     config() {
       return this.$store.state.config;
+    }
+  },
+  methods: {
+    async handleAlarmClick(alarm) {
+      if (alarm.subtype) {
+        const record = {
+          type: alarm.type,
+          subtype: alarm.subtype
+        };
+        if (alarm.details) {
+          record.details = alarm.details;
+        }
+        const rxDocument = await this.$store.dispatch("createRecord", record);
+        rxDocument.save();
+      } else {
+        this.$store.commit("updateUI", {
+          showTypeDialog: this.typeLookup[alarm.type]
+        });
+      }
     }
   }
 };
@@ -127,7 +152,6 @@ export default {
 // loading more? / limit loading: on all logs
 // calendar logs
 // Layouts
-// about with license of images
 // test offline mode
 
 // basic stats graphs
@@ -135,8 +159,6 @@ export default {
 // legends
 
 // [future maybe]
-// daily reminder vitamin D
-// alarms
 // readme captures
 // support category? other name? subsubtype?
 
