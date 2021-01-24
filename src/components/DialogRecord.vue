@@ -16,6 +16,7 @@
             label="Finish"
             v-model="currentRecord.toDate"
           ></date-time-picker>
+          <span v-if="!fromBeforeTo"> Finish must be after Start! </span>
           <v-select
             label="Type"
             v-if="type && type.subtypes && type.subtypes.length > 1"
@@ -53,7 +54,7 @@
           color="primary"
           text
           @click="save()"
-          :disabled="!currentRecord.subtype"
+          :disabled="!currentRecord.subtype || !fromBeforeTo"
         >
           Save
         </v-btn>
@@ -64,8 +65,6 @@
 <script>
 import { isRxDocument } from "rxdb/plugins/core";
 import DateTimePicker from "@/components/DateTimePicker";
-
-// TODO: validate fromDate before toDate
 
 export default {
   name: "DialogRecord",
@@ -94,6 +93,16 @@ export default {
     },
     value() {
       return this.$store.state.ui.showRecordDialog;
+    },
+    fromBeforeTo() {
+      if (this.subtype && this.subtype.withTimer && this.currentRecord.toDate) {
+        const fromDate = new Date(this.currentRecord.fromDate).getTime();
+        const toDate = new Date(this.currentRecord.toDate).getTime();
+        if (toDate - fromDate < 0) {
+          return false;
+        }
+      }
+      return true;
     }
   },
   watch: {
