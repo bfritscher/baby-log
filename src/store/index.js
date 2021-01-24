@@ -61,6 +61,8 @@ const store = new Vuex.Store({
           name: "Feeding",
           icon: "$baby-bottle",
           color: "#fdb74d",
+          colorLight: "#ffe0b2",
+          colorDark: "#ec9d24",
           subtypes: [
             {
               id: "LEFT_BREAST",
@@ -97,6 +99,8 @@ const store = new Vuex.Store({
           name: "Sleep",
           icon: "$zzz-sleep",
           color: "#48a0dc",
+          colorLight: "#9dcff2",
+          colorDark: "#2789cf",
           subtypes: [
             {
               id: "SLEEPING",
@@ -111,6 +115,8 @@ const store = new Vuex.Store({
           name: "Diapering",
           icon: "$diaper",
           color: "#7a62c9",
+          colorLight: "#c3b9e4",
+          colorDark: "#5d43b2",
           subtypes: [
             {
               id: "PEE",
@@ -134,6 +140,8 @@ const store = new Vuex.Store({
           name: "Leisure",
           icon: "$alphabet",
           color: "#17c6cc",
+          colorLight: "#c1f3f5",
+          colorDark: "#129ea3",
           subtypes: [
             {
               id: "LEISURE_TUMMY",
@@ -166,6 +174,8 @@ const store = new Vuex.Store({
           name: "Growth",
           icon: "$weight",
           color: "#52c772",
+          colorLight: "#b2edc2",
+          colorDark: "#42a15c",
           subtypes: [
             {
               id: "GROWTH_WEIGHT",
@@ -195,6 +205,8 @@ const store = new Vuex.Store({
           name: "Pumping",
           icon: "$pump",
           color: "#ff9259",
+          colorLight: "#ffceb5",
+          colorDark: "#db7e4d",
           subtypes: [
             {
               id: "PUMP_LEFT",
@@ -227,6 +239,8 @@ const store = new Vuex.Store({
           name: "Health",
           icon: "$health",
           color: "#fd7059",
+          colorLight: "#fdd4cd",
+          colorDark: "#f15540",
           subtypes: [
             {
               id: "HEALTH_MEDICATIONS",

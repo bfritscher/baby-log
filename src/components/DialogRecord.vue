@@ -123,6 +123,14 @@ export default {
       let value = this.value;
       if (!isRxDocument(value)) {
         // used to generate id
+        if (value.type && !value.subtype) {
+          const subtypes = this.$store.getters.typeLookup[
+            value.type
+          ].subtypes.map((subtype) => subtype.id);
+          if (subtypes.length > 0) {
+            value.subtype = subtypes[0];
+          }
+        }
         value = await this.$store.dispatch("createRecord", value);
       }
       this.currentRecord = Object.assign(

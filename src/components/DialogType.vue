@@ -142,7 +142,7 @@
 <script>
 import { mapGetters } from "vuex";
 import Timer from "@/components/Timer";
-
+import { setThemeColor } from "@/services/utils";
 import moment from "moment";
 
 export default {
@@ -168,6 +168,9 @@ export default {
         this.showDetails = false;
         this.currentSubtype = undefined;
         this.nbDaysHistory = this.defaultNbDaysHistory;
+        setThemeColor("#ffffff");
+      } else {
+        setThemeColor(this.type.colorDark);
       }
     },
     subtype() {
