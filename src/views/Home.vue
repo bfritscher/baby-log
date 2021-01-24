@@ -148,10 +148,8 @@ export default {
   }
 };
 
-// all logs group by day
-// loading more? / limit loading: on all logs
-// calendar logs
 // Layouts
+// all logs group by day refactor with timline and calendar
 // test offline mode
 
 // basic stats graphs
