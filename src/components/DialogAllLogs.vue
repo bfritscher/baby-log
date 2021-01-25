@@ -1,43 +1,61 @@
 <template>
-  <v-dialog fullscreen hide-overlay v-model="dialog">
+  <v-dialog
+    :fullscreen="$vuetify.breakpoint.mdAndDown"
+    :max-width="$store.state.ui.dialogFullscreenMaxWidth"
+    scrollable
+    hide-overlay
+    v-model="dialog"
+  >
     <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on" block>All Logs</v-btn>
+      <v-btn v-bind="attrs" v-on="on" block color="primary">All Logs</v-btn>
     </template>
     <v-card>
-      <v-toolbar color="primary">
-        <v-btn @click="dialog = false" icon>
-          <v-icon>mdi-arrow-left</v-icon>
-        </v-btn>
-        <v-toolbar-title>All Logs</v-toolbar-title>
-        <v-spacer></v-spacer>
-      </v-toolbar>
-      <div v-for="(group, i) in groupedRecordsPaged" :key="i">
-        <h2>{{ group.day }}</h2>
-        <div
-          v-for="(record, i) in group.records"
-          :key="i"
-          @click.stop="$store.commit('updateUI', { showRecordDialog: record })"
-        >
-          <v-icon
-            v-text="subtypeLookup[record.subtype].icon"
-            :style="{ 'background-color': typeLookup[record.type].color }"
-          ></v-icon>
-          <strong>{{ record.time() }}</strong>
-          <strong>{{ subtypeLookup[record.subtype].name }}</strong>
-          {{ record.duration() }}
-          <span
-            v-if="subtypeLookup[record.subtype].withAmount && record.amount"
+      <v-card-title class="pa-0">
+        <v-toolbar color="primary" flat>
+          <v-btn @click="dialog = false" icon>
+            <v-icon>mdi-arrow-left</v-icon>
+          </v-btn>
+          <v-toolbar-title>All Logs</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn v-if="$vuetify.breakpoint.mdAndUp" @click="dialog = false" icon>
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+      </v-card-title>
+      <v-card-text>
+        <div v-for="(group, i) in groupedRecordsPaged" :key="i">
+          <h2 class="primary--text">{{ group.day }}</h2>
+          <div
+            v-for="(record, i) in group.records"
+            :key="i"
+            @click.stop="
+              $store.commit('updateUI', { showRecordDialog: record })
+            "
           >
-            {{ record.amount }}{{ record.unit }}
-          </span>
-          {{ record.details }}
+            <v-icon
+              v-text="subtypeLookup[record.subtype].icon"
+              :style="{ 'background-color': typeLookup[record.type].color }"
+            ></v-icon>
+            <strong>{{ record.time() }}</strong>
+            <strong>{{ subtypeLookup[record.subtype].name }}</strong>
+            {{ record.duration() }}
+            <span
+              v-if="subtypeLookup[record.subtype].withAmount && record.amount"
+            >
+              {{ record.amount }}{{ record.unit }}
+            </span>
+            {{ record.details }}
+          </div>
         </div>
-      </div>
-      <v-btn
-        v-if="nbDaysHistory < groupedRecords.length"
-        @click="nbDaysHistory += defaultNbDaysHistory"
-        >Load More</v-btn
-      >
+        <v-btn
+          block
+          text
+          color="primary"
+          v-if="nbDaysHistory < groupedRecords.length"
+          @click="nbDaysHistory += defaultNbDaysHistory"
+          >Load More</v-btn
+        >
+      </v-card-text>
     </v-card>
   </v-dialog>
 </template>

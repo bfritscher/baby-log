@@ -1,9 +1,14 @@
 <template>
-  <div @click.stop="$store.commit('updateUI', { showTypeDialog: type })">
+  <v-list-item @click.stop="$store.commit('updateUI', { showTypeDialog: type })">
+      <v-list-item-icon class="my-1 mr-3">
     <v-icon
+    class="type-icon"
       v-text="subtype.icon"
       :style="{ 'background-color': type.color }"
     ></v-icon>
+    </v-list-item-icon>
+     <v-list-item-content>
+                  <v-list-item-title>
     <span>{{ ago() }}</span>
     <span>, {{ subtype.name }}</span>
     <span v-if="subtype.withAmount && record.amount"
@@ -11,7 +16,9 @@
     >
     {{ record.details }}
     <span v-if="subtype.withTimer">, {{ record.duration() }}</span>
-  </div>
+    </v-list-item-title>
+                </v-list-item-content>
+  </v-list-item>
 </template>
 
 <script>

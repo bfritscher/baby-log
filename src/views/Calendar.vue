@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <h1>Calendar</h1>
+  <v-container>
     <v-date-picker
       first-day-of-week="1"
       full-width
@@ -9,25 +8,45 @@
       event-color="green lighten-1"
       v-model="day"
     ></v-date-picker>
-    <day-summary :day="day"></day-summary>
-    // TODO show records for a day
-    <v-btn
-      v-for="type in $store.state.config.types"
-      :key="type.id"
-      :color="type.color"
-      @click.stop="
-        $store.commit('updateUI', {
-          showRecordDialog: {
-            type: type.id,
-            fromDate: `${day}T12:00:00`,
-            toDate: `${day}T12:00:00`
-          }
-        })
-      "
-    >
-      <v-icon v-text="type.icon"></v-icon>
-    </v-btn>
-  </div>
+
+    <v-card class="my-2 fill-height">
+      <v-card-title class="text-subtitle-1 primary--text"
+        >Daily summary</v-card-title
+      >
+      <v-card-text>
+        <day-summary :day="day"></day-summary>
+      </v-card-text>
+    </v-card>
+
+    <v-card class="my-2 fill-height">
+      <v-card-title class="text-subtitle-1 primary--text"
+        >Add record</v-card-title
+      >
+      <v-card-text>
+        <v-btn
+          depressed
+          v-for="type in $store.state.config.types"
+          :key="type.id"
+          :color="type.color"
+          @click.stop="
+            $store.commit('updateUI', {
+              showRecordDialog: {
+                type: type.id,
+                fromDate: `${day}T12:00:00`,
+                toDate: `${day}T12:00:00`
+              }
+            })
+          "
+        >
+          <v-icon v-text="type.icon"></v-icon>
+        </v-btn>
+      </v-card-text>
+    </v-card>
+    <v-card class="my-2 fill-height">
+      <v-card-title class="text-subtitle-1 primary--text">Records</v-card-title>
+      <v-card-text> // TODO show records for a day </v-card-text>
+    </v-card>
+  </v-container>
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-  <div>{{ age }}</div>
+  <span>age {{ age }}</span>
 </template>
 
 <script>

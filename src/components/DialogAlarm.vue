@@ -1,29 +1,86 @@
 <template>
-  <v-dialog persistent :value="value" max-width="600px">
+  <v-dialog
+    persistent
+    :value="value"
+    :max-width="$store.state.ui.dialogMaxWidth"
+  >
     <v-card>
-      <v-toolbar :color="type.color">
-        <v-toolbar-title>{{ type.name }}</v-toolbar-title>
+      <v-toolbar :color="type.color" flat>
+        <v-toolbar-title>{{
+          create ? "Add Alarm" : "Edit Alarm"
+        }}</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-switch v-model="alarm.enabled" label="Enabled"></v-switch>
+        <v-switch
+          class="v-input--reverse"
+          color="secondary"
+          v-model="alarm.enabled"
+          inset
+          hide-details
+          :label="alarm.enabled ? 'on' : 'off'"
+        ></v-switch>
       </v-toolbar>
       <v-card-text>
         <v-container v-if="alarm">
           <v-select
+          dense
             label="Type"
             v-model="alarm.type"
             :items="types"
             item-text="name"
             item-value="id"
             :rules="[rules.required]"
-          ></v-select>
+          >
+            <template v-slot:item="data">
+              <v-list-item-icon>
+                <v-icon
+                  class="type-icon"
+                  :style="{ 'background-color': data.item.color }"
+                  v-text="data.item.icon"
+                ></v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>{{ data.item.name }}</v-list-item-title>
+              </v-list-item-content>
+            </template>
+            <template v-slot:selection="data">
+              <v-icon
+                class="type-icon mr-3"
+                :style="{ 'background-color': type.color }"
+                v-text="data.item.icon"
+              ></v-icon>
+              {{ data.item.name }}
+            </template>
+          </v-select>
           <v-select
+          dense
             label="Type"
             v-model="alarm.subtype"
             :items="type.subtypes"
             item-text="name"
             item-value="id"
             clearable
-          ></v-select>
+          >
+            <template v-slot:item="data">
+              <v-list-item-icon>
+                <v-icon
+                  class="type-icon"
+                  :style="{ 'background-color': type.color }"
+                  v-text="data.item.icon"
+                ></v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>{{ data.item.name }}</v-list-item-title>
+              </v-list-item-content>
+            </template>
+            <template v-slot:selection="data">
+              <v-icon
+                class="type-icon mr-3"
+                :style="{ 'background-color': type.color }"
+                v-text="data.item.icon"
+              ></v-icon>
+              {{ data.item.name }}
+            </template>
+          </v-select>
           <v-text-field
             type="text"
             label="Details"

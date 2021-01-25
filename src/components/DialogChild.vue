@@ -1,18 +1,24 @@
 <template>
-  <v-dialog persistent v-model="dialog" max-width="600px">
+  <v-dialog
+    persistent
+    v-model="dialog"
+    :max-width="$store.state.ui.dialogMaxWidth"
+  >
     <template v-slot:activator="{ on, attrs }">
       <div v-on="on" v-bind="attrs">
         <slot></slot>
       </div>
     </template>
     <v-card>
-      <v-toolbar>
-        <v-toolbar-title>{{
-          create ? "Add Child" : "Edit Child"
-        }}</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <span v-if="!create">id: {{ child.id }}</span>
-      </v-toolbar>
+      <v-card-title class="pa-0">
+        <v-toolbar color="primary" flat>
+          <v-toolbar-title>{{
+            create ? "Add Child" : "Edit Child"
+          }}</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <span v-if="!create">id: {{ child.id }}</span>
+        </v-toolbar>
+      </v-card-title>
       <v-card-text>
         <v-container v-if="child">
           <v-text-field
@@ -89,11 +95,11 @@ export default {
           value: ""
         },
         {
-          text: "Boy",
+          text: "♂️ Boy",
           value: "M"
         },
         {
-          text: "Girl",
+          text: "♀️ Girl",
           value: "F"
         }
       ]

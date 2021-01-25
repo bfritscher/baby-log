@@ -1,7 +1,11 @@
 <template>
-  <v-dialog persistent :value="value" max-width="600px">
+  <v-dialog
+    persistent
+    :value="value"
+    :max-width="$store.state.ui.dialogMaxWidth"
+  >
     <v-card>
-      <v-toolbar :color="type.color">
+      <v-toolbar :color="type.color" flat>
         <v-toolbar-title>{{ type.name }}</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
@@ -18,6 +22,7 @@
           ></date-time-picker>
           <span v-if="!fromBeforeTo"> Finish must be after Start! </span>
           <v-select
+            dense
             label="Type"
             v-if="type && type.subtypes && type.subtypes.length > 1"
             v-model="currentRecord.subtype"
@@ -25,7 +30,28 @@
             item-text="name"
             item-value="id"
             :rules="[rules.required]"
-          ></v-select>
+          >
+            <template v-slot:item="data">
+              <v-list-item-icon>
+                <v-icon
+                  class="type-icon"
+                  :style="{ 'background-color': type.color }"
+                  v-text="data.item.icon"
+                ></v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>{{ data.item.name }}</v-list-item-title>
+              </v-list-item-content>
+            </template>
+            <template v-slot:selection="data">
+              <v-icon
+                class="type-icon mr-3"
+                :style="{ 'background-color': type.color }"
+                v-text="data.item.icon"
+              ></v-icon>
+              {{ data.item.name }}
+            </template>
+          </v-select>
           <v-text-field
             v-if="subtype.withAmount"
             type="number"

@@ -33,7 +33,9 @@ const store = new Vuex.Store({
     ui: {
       showTypeDialog: false,
       showRecordDialog: false,
-      showAlarmDialog: false
+      showAlarmDialog: false,
+      dialogMaxWidth: 600,
+      dialogFullscreenMaxWidth: 1024
     },
     user: {
       id: "logged in id?"
@@ -361,7 +363,6 @@ const store = new Vuex.Store({
           todayDay.setHours(0, 0, 0, 0, 0);
           const diffDays =
             (todayDay.getTime() - latestDay.getTime()) / (24 * 3600 * 1000);
-          console.log(diffDays);
           if (diffDays - alarm.intervalAmount >= 0) {
             activeAlarms.push(alarm);
           }

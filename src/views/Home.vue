@@ -1,97 +1,188 @@
 <template>
   <div class="home">
-    <div>
-      // TODO: scroll on mobile?
-      <v-btn
-        v-for="type in config.types"
-        :key="type.id"
-        :color="type.color"
-        @click.stop="$store.commit('updateUI', { showTypeDialog: type })"
-      >
-        <v-icon v-text="type.icon"></v-icon>
-      </v-btn>
-    </div>
-    <div>
-      <div
-        v-for="timer in timers"
-        :key="timer.id"
-        @click.stop="
-          $store.commit('updateUI', { showTypeDialog: typeLookup[timer.type] })
-        "
-      >
-        <v-icon
-          class="pulse"
-          v-text="subtypeLookup[timer.subtype].icon"
-          :style="{ 'background-color': typeLookup[timer.type].color }"
-        ></v-icon>
-        {{ subtypeLookup[timer.subtype].name }}
-        in progress
-        <timer :fromDate="timer.fromDate"></timer>
-      </div>
-    </div>
-    <v-card>
-      <h2>
-        Next Activities
-        <v-btn
-          icon
-          @click.stop="
-            $store.commit('updateUI', {
-              showAlarmDialog: { type: 'FEEDING', enabled: true }
-            })
-          "
-        >
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
-      </h2>
-      <div
-        v-for="(alarm, i) in activeAlarms"
-        :key="i"
-        @click.stop="handleAlarmClick(alarm)"
-      >
-        <v-icon
-          v-text="
-            alarm.subtype
-              ? subtypeLookup[alarm.subtype].icon
-              : typeLookup[alarm.type].icon
-          "
-          :style="{ 'background-color': typeLookup[alarm.type].color }"
-        ></v-icon>
-        {{ typeLookup[alarm.type].name }}
-        <span v-if="alarm.subtype">{{
-          subtypeLookup[alarm.subtype].name
-        }}</span>
-        {{ alarm.details }} <b>{{ alarm.durationToNextText }}</b>
-        <v-btn
-          icon
-          @click.stop="
-            $store.commit('updateUI', {
-              showAlarmDialog: alarm
-            })
-          "
-        >
-          <v-icon>mdi-dots-vertical</v-icon>
-        </v-btn>
-      </div>
+    <v-card tile>
+      <v-container>
+        <v-slide-group>
+          <v-slide-item v-for="type in config.types" :key="type.id">
+            <v-btn
+              :color="type.color"
+              depressed
+              class="ma-1 px-md-12 px-lg-16 big-type"
+              @click.stop="$store.commit('updateUI', { showTypeDialog: type })"
+            >
+              <v-icon v-text="type.icon"></v-icon>
+            </v-btn>
+          </v-slide-item>
+        </v-slide-group>
+      </v-container>
     </v-card>
-    <v-card>
-      <h2>Latest activities</h2>
-      <record
-        v-for="(record, i) in $store.getters.latestActivityByType"
-        :key="i"
-        :record="record"
-      ></record>
-    </v-card>
-    <v-card>
-      <h2>Summary for today</h2>
-      <child-age
-        v-if="
-          $store.getters.activeChild && $store.getters.activeChild.birthdate
-        "
-        :birthdate="$store.getters.activeChild.birthdate"
-      ></child-age>
-      <day-summary :day="today"></day-summary>
-    </v-card>
-    <dialog-all-logs></dialog-all-logs>
+
+    <v-container class="grey lighten-3">
+      <v-row>
+        <v-col cols="12" md="6" lg="4">
+          <v-card class="my-2">
+            <v-list dense>
+              <div v-for="(timer, index) in timers" :key="timer.id">
+                <v-list-item
+                  @click.stop="
+                    $store.commit('updateUI', {
+                      showTypeDialog: typeLookup[timer.type]
+                    })
+                  "
+                >
+                  <v-list-item-icon>
+                    <v-icon
+                      class="pulse type-icon"
+                      v-text="subtypeLookup[timer.subtype].icon"
+                      :style="{
+                        'background-color': typeLookup[timer.type].color
+                      }"
+                    ></v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-row>
+                      <v-col>
+                        <v-list-item-title class="font-weight-medium">{{
+                          subtypeLookup[timer.subtype].name
+                        }}</v-list-item-title>
+                        <v-list-item-subtitle>in progress</v-list-item-subtitle>
+                      </v-col>
+                      <v-col class="text-h5 text-right">
+                        <timer
+                          :style="{ color: typeLookup[timer.type].color }"
+                          :fromDate="timer.fromDate"
+                        ></timer>
+                      </v-col>
+                    </v-row>
+                  </v-list-item-content>
+                  <v-list-item-action>
+                    <v-icon>mdi-chevron-right</v-icon>
+                  </v-list-item-action>
+                </v-list-item>
+                <v-divider
+                  v-if="index < timers.length - 1"
+                  :key="index"
+                ></v-divider>
+              </div>
+            </v-list>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" md="6" lg="4">
+          <v-card class="my-2 fill-height">
+            <v-card-title class="text-subtitle-1 primary--text pb-0">
+              Next Activities
+              <v-spacer></v-spacer>
+              <v-btn
+                icon
+                @click.stop="
+                  $store.commit('updateUI', {
+                    showAlarmDialog: { type: 'FEEDING', enabled: true }
+                  })
+                "
+              >
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </v-card-title>
+            <v-list dense>
+              <v-list-item
+                v-for="(alarm, i) in activeAlarms"
+                :key="i"
+                @click.stop="handleAlarmClick(alarm)"
+              >
+                <v-list-item-icon class="my-1 mr-3">
+                  <v-icon
+                    class="type-icon"
+                    v-text="
+                      alarm.subtype
+                        ? subtypeLookup[alarm.subtype].icon
+                        : typeLookup[alarm.type].icon
+                    "
+                    :style="{
+                      'background-color': typeLookup[alarm.type].color
+                    }"
+                  ></v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    {{ typeLookup[alarm.type].name }}
+                    <span v-if="alarm.subtype">{{
+                      subtypeLookup[alarm.subtype].name
+                    }}</span>
+                    {{ alarm.details }} <b>{{ alarm.durationToNextText }}</b>
+                  </v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-action class="ma-0">
+                  <v-tooltip bottom open-delay="600">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        icon
+                        @click.stop="
+                          $store.commit('updateUI', {
+                            showAlarmDialog: alarm
+                          })
+                        "
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <v-icon>mdi-dots-vertical</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Edit Alarm</span>
+                  </v-tooltip>
+                </v-list-item-action>
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </v-col>
+        <v-col cols="12" md="6" lg="4">
+          <v-card class="my-2 fill-height">
+            <v-card-title class="text-subtitle-1 primary--text pb-0"
+              >Latest activities</v-card-title
+            >
+            <v-list dense>
+              <record
+                v-for="(record, i) in $store.getters.latestActivityByType"
+                :key="i"
+                :record="record"
+              ></record>
+            </v-list>
+          </v-card>
+        </v-col>
+        <v-col cols="12" md="6" lg="4">
+          <v-card class="my-2 fill-height">
+            <v-card-title class="text-subtitle-1 primary--text pb-0"
+              >Summary for today</v-card-title
+            >
+            <v-list dense class=" pb-0">
+              <v-list-item>
+                <v-list-item-icon class="my-1 mr-3">
+                  <v-icon class="type-icon primary"
+                    >mdi-calendar-month</v-icon
+                  >
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>
+                  <child-age
+                    v-if="
+                      $store.getters.activeChild &&
+                      $store.getters.activeChild.birthdate
+                    "
+                    :birthdate="$store.getters.activeChild.birthdate"
+                  ></child-age>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+            <day-summary :day="today" class="pt-0"></day-summary>
+          </v-card>
+        </v-col>
+        <v-col cols="12" md="6" lg="4" offset-lg="4">
+          <dialog-all-logs></dialog-all-logs>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -179,6 +270,17 @@ export default {
 // https://www.thebump.com/a/baby-milestone-chart
 </script>
 <style>
+.big-type {
+  width: 60px !important;
+  height: 60px !important;
+  min-width: 60px !important;
+  min-height: 60px !important;
+}
+.big-type .v-icon__component {
+  width: 30px;
+  height: 30px;
+}
+
 .pulse {
   animation-name: pulse;
   animation-iteration-count: infinite;

@@ -1,26 +1,35 @@
 <template>
-  <div>
-    <div
+  <v-list dense>
+    <v-list-item
       v-for="group in dayGroup"
       :key="group.type"
       @click.stop="
         $store.commit('updateUI', { showTypeDialog: typeLookup[group.type] })
       "
     >
-      <v-icon
-        v-text="typeLookup[group.type].icon"
-        :style="{ 'background-color': typeLookup[group.type].color }"
-      ></v-icon>
-      {{ group.count }} times
-      <span v-if="group.totalDuration > 0"
-        >, {{ duration(group.totalDuration) }}</span
-      >
-      <span v-if="group.totalAmount > 0">, {{ group.totalAmount }} ml </span>
-      <span v-for="subgroup in group.subtypes" :key="subgroup.subtype">
-        , {{ subgroup.count }} {{ subtypeLookup[subgroup.subtype].name }}
-      </span>
-    </div>
-  </div>
+      <v-list-item-icon class="my-1 mr-3">
+        <v-icon
+          class="type-icon"
+          v-text="typeLookup[group.type].icon"
+          :style="{ 'background-color': typeLookup[group.type].color }"
+        ></v-icon>
+      </v-list-item-icon>
+      <v-list-item-content>
+        <v-list-item-title>
+          {{ group.count }} times
+          <span v-if="group.totalDuration > 0"
+            >, {{ duration(group.totalDuration) }}</span
+          >
+          <span v-if="group.totalAmount > 0"
+            >, {{ group.totalAmount }} ml
+          </span>
+          <span v-for="subgroup in group.subtypes" :key="subgroup.subtype">
+            , {{ subgroup.count }} {{ subtypeLookup[subgroup.subtype].name }}
+          </span>
+        </v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+  </v-list>
 </template>
 
 <script>

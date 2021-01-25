@@ -1,143 +1,209 @@
 <template>
   <v-dialog
-    fullscreen
+    :fullscreen="$vuetify.breakpoint.mdAndDown"
+    :max-width="$store.state.ui.dialogFullscreenMaxWidth"
+    scrollable
     hide-overlay
     :value="type"
     transition="dialog-bottom-transition"
+    @input="$event ? '' : close()"
   >
-    <v-card v-if="type">
-      <v-toolbar :color="type.color">
-        <v-btn @click="close()" icon>
-          <v-icon>mdi-arrow-left</v-icon>
-        </v-btn>
-        <v-toolbar-title>{{ type.name }}</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn
-          icon
-          @click.stop="
-            $store.commit('updateUI', { showRecordDialog: { type: type.id } })
-          "
-        >
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
-      </v-toolbar>
-      <div v-if="type && !(subtype || timer)">
-        <v-btn
-          class="btn-icon"
-          v-for="subtype in type.subtypes"
-          :key="subtype.id"
-          @click="selectSubtype(subtype)"
-          rounded
-          elevation="0"
-        >
-          <v-icon
-            v-text="subtype.icon"
-            :style="{ 'background-color': type.color }"
-          ></v-icon>
-          {{ subtype.name }}
-        </v-btn>
-      </div>
-      <div v-else>
-        <v-btn class="btn-icon" rounded elevation="0">
-          <v-icon
-            v-text="subtype.icon"
-            :style="{ 'background-color': type.color }"
-          ></v-icon>
-          {{ subtype.name }}
-        </v-btn>
-        <span v-if="timer">
-          <timer :from-date="timer.fromDate"></timer>
-        </span>
-        <v-btn icon @click="showDetails = !showDetails"
-          ><v-icon>mdi-pen</v-icon></v-btn
-        >
-        <div v-if="subtype.withAmount">
-          <v-btn icon @click="changeAmount(-1)" :disabled="amount === 0">
-            <v-icon>mdi-minus</v-icon>
-          </v-btn>
-          <v-btn icon @click="changeAmount(1)">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-          <v-text-field
-            type="number"
-            min="0"
-            label="Amount"
-            v-model.number="amount"
-          ></v-text-field>
-          <v-text-field type="text" label="Unit" v-model="unit"></v-text-field>
-        </div>
-      </div>
-      <v-text-field
-        type="text"
-        label="Details"
-        placeholder="Optional details"
-        v-model="details"
-        v-if="showDetails"
-      ></v-text-field>
-      <v-btn block v-if="timer" @click="endTimer()" :color="type.color"
-        >Finish</v-btn
-      >
-
-      <div
-        v-if="!timer && subtype && (subtype.withAmount || subtype.askDetail)"
-      >
-        <v-btn block @click="createRecord()">Save</v-btn>
-        <v-btn @click="currentSubtype = undefined">Cancel</v-btn>
-      </div>
-      // TODO make stick
-      <div v-for="(day, i) in timelineRecordsPaged" :key="i">
-        <p>{{ day.day }}</p>
-        <v-timeline dense align-top>
-          <template v-for="(record, i) in day.records">
-            <v-timeline-item hide-dot v-if="record.durationBetween" :key="i">
-              {{ record.durationBetween }}
-            </v-timeline-item>
-            <v-timeline-item
-              v-else
-              :value="record"
-              :key="i"
-              fill-dot
-              :color="typeLookup[record.type].color"
-              :icon="
-                subtypeLookup[
-                  record.subtype === 'NONE' ? record.type : record.subtype
-                ].icon
+    <v-card v-if="type" tile>
+      <v-card-title class="pa-0">
+        <div class="flex">
+          <v-toolbar :color="type.color" flat>
+            <v-btn @click="close()" icon>
+              <v-icon>mdi-arrow-left</v-icon>
+            </v-btn>
+            <v-toolbar-title>{{ type.name }}</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-btn
+              v-if="currentSubtype"
+              text
+              @click="currentSubtype = undefined"
+              >Cancel</v-btn
+            >
+            <v-btn
+              v-if="!currentSubtype && !timer"
+              icon
+              @click.stop="
+                $store.commit('updateUI', {
+                  showRecordDialog: { type: type.id }
+                })
               "
             >
-              <v-row
-                class="pt-1"
-                @click.stop="
-                  $store.commit('updateUI', { showRecordDialog: record })
-                "
-              >
-                <v-col cols="1">
-                  <strong>{{ record.time() }}</strong>
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+            <v-btn v-if="$vuetify.breakpoint.mdAndUp" @click="close()" icon>
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-toolbar>
+          <v-container fluid>
+            <div v-if="type && !(subtype || timer)">
+              <v-row>
+                <v-col
+                  cols="6"
+                  md="4"
+                  lg="3"
+                  xl="2"
+                  v-for="subtype in type.subtypes"
+                  :key="subtype.id"
+                >
+                  <v-btn
+                    block
+                    class="btn-icon"
+                    @click="selectSubtype(subtype)"
+                    rounded
+                    elevation="0"
+                  >
+                    <v-icon
+                      v-text="subtype.icon"
+                      :style="{ 'background-color': type.color }"
+                    ></v-icon>
+                    {{ subtype.name }}
+                  </v-btn>
                 </v-col>
+              </v-row>
+            </div>
+            <div v-else>
+              <v-row class="align-end">
+                <v-col cols="5" md="4" lg="3" xl="2">
+                  <v-btn block class="btn-icon" rounded elevation="0">
+                    <v-icon
+                      v-text="subtype.icon"
+                      :style="{ 'background-color': type.color }"
+                    ></v-icon>
+                    {{ subtype.name }}
+                  </v-btn>
+                </v-col>
+                <v-col v-if="timer" class="text-h5 text-center">
+                  <timer
+                    :from-date="timer.fromDate"
+                    :style="{ color: type.color }"
+                  ></timer>
+                </v-col>
+                <v-col cols="2" class="text-right">
+                  <v-btn icon @click="showDetails = !showDetails"
+                    ><v-icon>mdi-pencil</v-icon></v-btn
+                  >
+                </v-col>
+              </v-row>
+              <v-row>
                 <v-col>
-                  <strong>{{ subtypeLookup[record.subtype].name }}</strong>
-                  <div class="caption">
-                    {{ record.duration() }}
-                    <span
-                      v-if="
-                        subtypeLookup[record.subtype].withAmount &&
-                        record.amount
-                      "
+                  <div v-if="subtype.withAmount">
+                    <v-btn
+                      icon
+                      @click="changeAmount(-1)"
+                      :disabled="amount === 0"
                     >
-                      {{ record.amount }}{{ record.unit }}
-                    </span>
-                    {{ record.details }}
+                      <v-icon>mdi-minus</v-icon>
+                    </v-btn>
+                    <v-btn icon @click="changeAmount(1)">
+                      <v-icon>mdi-plus</v-icon>
+                    </v-btn>
+                    <v-text-field
+                      type="number"
+                      min="0"
+                      label="Amount"
+                      v-model.number="amount"
+                    ></v-text-field>
+                    <v-text-field
+                      type="text"
+                      label="Unit"
+                      v-model="unit"
+                    ></v-text-field>
                   </div>
                 </v-col>
               </v-row>
-            </v-timeline-item>
-          </template>
-        </v-timeline>
-      </div>
-      <v-btn
-        v-if="nbDaysHistory < timelineRecords.length"
-        @click="nbDaysHistory += defaultNbDaysHistory"
-        >Load More</v-btn
-      >
+            </div>
+            <v-text-field
+              :color="type.color"
+              type="text"
+              label="Details"
+              placeholder="Optional details"
+              v-model="details"
+              v-if="showDetails"
+            ></v-text-field>
+            <v-btn
+              block
+              depressed
+              v-if="timer"
+              @click="endTimer()"
+              :color="type.color"
+              >Finish</v-btn
+            >
+
+            <div
+              v-if="
+                !timer && subtype && (subtype.withAmount || subtype.askDetail)
+              "
+            >
+              <v-btn block @click="createRecord()" :color="type.color"
+                >Save</v-btn
+              >
+            </div>
+          </v-container>
+          <v-divider></v-divider>
+        </div>
+      </v-card-title>
+      <v-card-text class="grey lighten-3">
+        <div v-for="(day, i) in timelineRecordsPaged" :key="i">
+          <p class="primary--text">{{ day.day }}</p>
+          <v-timeline dense align-top>
+            <template v-for="(record, i) in day.records">
+              <v-timeline-item hide-dot v-if="record.durationBetween" :key="i">
+                {{ record.durationBetween }}
+              </v-timeline-item>
+              <v-timeline-item
+                v-else
+                :value="record"
+                :key="i"
+                fill-dot
+                :color="typeLookup[record.type].color"
+                :icon="
+                  subtypeLookup[
+                    record.subtype === 'NONE' ? record.type : record.subtype
+                  ].icon
+                "
+              >
+                <v-row
+                  class="pt-1"
+                  @click.stop="
+                    $store.commit('updateUI', { showRecordDialog: record })
+                  "
+                >
+                  <v-col cols="1">
+                    <strong>{{ record.time() }}</strong>
+                  </v-col>
+                  <v-col>
+                    <strong>{{ subtypeLookup[record.subtype].name }}</strong>
+                    <div class="caption">
+                      {{ record.duration() }}
+                      <span
+                        v-if="
+                          subtypeLookup[record.subtype].withAmount &&
+                          record.amount
+                        "
+                      >
+                        {{ record.amount }}{{ record.unit }}
+                      </span>
+                      {{ record.details }}
+                    </div>
+                  </v-col>
+                </v-row>
+              </v-timeline-item>
+            </template>
+          </v-timeline>
+        </div>
+        <v-btn
+          block
+          text
+          color="primary"
+          v-if="nbDaysHistory < timelineRecords.length"
+          @click="nbDaysHistory += defaultNbDaysHistory"
+          >Load More</v-btn
+        >
+      </v-card-text>
     </v-card>
   </v-dialog>
 </template>

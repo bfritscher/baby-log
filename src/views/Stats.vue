@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
     // statitics for last 7, 14, 30 day or custom // avg subtype count per day
     // avg subtype duration per day
     <div style="width: 30%">
@@ -16,7 +16,7 @@
 
     <br />
     special case growth
-  </div>
+  </v-container>
 </template>
 <script>
 import Chart from "chart.js";
