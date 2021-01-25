@@ -66,7 +66,7 @@
               </v-row>
             </div>
             <div v-else>
-              <v-row class="align-end">
+              <v-row class="align-end mb-3">
                 <v-col cols="5" md="4" lg="3" xl="2">
                   <v-btn block class="btn-icon" rounded elevation="0">
                     <v-icon
@@ -76,8 +76,9 @@
                     {{ subtype.name }}
                   </v-btn>
                 </v-col>
-                <v-col v-if="timer" class="text-h5 text-center">
+                <v-col class="text-h5 text-center">
                   <timer
+                    v-if="timer"
                     :from-date="timer.fromDate"
                     :style="{ color: type.color }"
                   ></timer>
@@ -88,38 +89,51 @@
                   >
                 </v-col>
               </v-row>
-              <v-row>
-                <v-col>
-                  <div v-if="subtype.withAmount">
-                    <v-btn
-                      icon
-                      @click="changeAmount(-1)"
-                      :disabled="amount === 0"
-                    >
-                      <v-icon>mdi-minus</v-icon>
-                    </v-btn>
-                    <v-btn icon @click="changeAmount(1)">
-                      <v-icon>mdi-plus</v-icon>
-                    </v-btn>
-                    <v-text-field
-                      type="number"
-                      min="0"
-                      label="Amount"
-                      v-model.number="amount"
-                    ></v-text-field>
-                    <v-text-field
-                      type="text"
-                      label="Unit"
-                      v-model="unit"
-                    ></v-text-field>
-                  </div>
+              <v-row v-if="subtype.withAmount">
+                <v-col class="text-right" cols="3">
+                  <v-btn
+                    icon
+                    @click="changeAmount(-1)"
+                    :disabled="amount === 0"
+                  >
+                    <v-icon>mdi-minus</v-icon>
+                  </v-btn>
+                  <v-btn icon @click="changeAmount(1)">
+                    <v-icon>mdi-plus</v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col cols="7" md="4">
+                  <v-text-field
+                    dense
+                    single-line
+                    filled
+                    :prepend-icon="unitIcon"
+                    :color="type.color"
+                    type="number"
+                    min="0"
+                    placeholder="Amount"
+                    v-model.number="amount"
+                  ></v-text-field>
+                </v-col>
+                <v-col md="2">
+                  <v-text-field
+                    dense
+                    single-line
+                    filled
+                    :color="type.color"
+                    type="text"
+                    placeholder="Unit"
+                    v-model="unit"
+                  ></v-text-field>
                 </v-col>
               </v-row>
             </div>
             <v-text-field
+              dense
+              single-line
+              filled
               :color="type.color"
               type="text"
-              label="Details"
               placeholder="Optional details"
               v-model="details"
               v-if="showDetails"
@@ -133,28 +147,40 @@
               >Finish</v-btn
             >
 
-            <div
+            <v-row
               v-if="
                 !timer && subtype && (subtype.withAmount || subtype.askDetail)
               "
             >
-              <v-btn block @click="createRecord()" :color="type.color"
-                >Save</v-btn
-              >
-            </div>
+              <v-col cols="12" md="6" offset-md="3">
+                <v-btn
+                  block
+                  depressed
+                  @click="createRecord()"
+                  :color="type.color"
+                  >Save</v-btn
+                >
+              </v-col>
+            </v-row>
           </v-container>
           <v-divider></v-divider>
         </div>
       </v-card-title>
-      <v-card-text class="grey lighten-3">
+      <v-card-text>
         <div v-for="(day, i) in timelineRecordsPaged" :key="i">
-          <p class="primary--text">{{ day.day }}</p>
-          <v-timeline dense align-top>
+          <p class="primary--text pt-3">{{ day.day }}</p>
+          <v-timeline dense align-top class="pt-0 ml-n8">
             <template v-for="(record, i) in day.records">
-              <v-timeline-item hide-dot v-if="record.durationBetween" :key="i">
+              <v-timeline-item
+                class="pb-1 ml-n6"
+                hide-dot
+                v-if="record.durationBetween"
+                :key="i"
+              >
                 {{ record.durationBetween }}
               </v-timeline-item>
               <v-timeline-item
+                class="pb-1"
                 v-else
                 :value="record"
                 :key="i"
@@ -172,12 +198,12 @@
                     $store.commit('updateUI', { showRecordDialog: record })
                   "
                 >
-                  <v-col cols="1">
+                  <v-col cols="3">
                     <strong>{{ record.time() }}</strong>
                   </v-col>
                   <v-col>
                     <strong>{{ subtypeLookup[record.subtype].name }}</strong>
-                    <div class="caption">
+                    <span class="caption">
                       {{ record.duration() }}
                       <span
                         v-if="
@@ -188,7 +214,7 @@
                         {{ record.amount }}{{ record.unit }}
                       </span>
                       {{ record.details }}
-                    </div>
+                    </span>
                   </v-col>
                 </v-row>
               </v-timeline-item>
@@ -268,6 +294,12 @@ export default {
         this.currentSubtype ||
         (this.timer && this.subtypeLookup[this.timer.subtype])
       );
+    },
+    unitIcon() {
+      if (this.subtype && this.subtype.withAmount) {
+        return this.$store.state.ui.unitsIcon[this.subtype.unit];
+      }
+      return "";
     },
     timelineRecordsPaged() {
       return this.timelineRecords.slice(0, this.nbDaysHistory);

@@ -22,8 +22,11 @@
       <v-card-text>
         <v-container v-if="alarm">
           <v-select
-          dense
-            label="Type"
+            dense
+            single-line
+            filled
+            :color="type.color"
+            label="Activity"
             v-model="alarm.type"
             :items="types"
             item-text="name"
@@ -42,17 +45,19 @@
                 <v-list-item-title>{{ data.item.name }}</v-list-item-title>
               </v-list-item-content>
             </template>
-            <template v-slot:selection="data">
+            <template v-slot:prepend>
               <v-icon
-                class="type-icon mr-3"
+                class="type-icon"
                 :style="{ 'background-color': type.color }"
-                v-text="data.item.icon"
+                v-text="type.icon"
               ></v-icon>
-              {{ data.item.name }}
             </template>
           </v-select>
           <v-select
-          dense
+            dense
+            single-line
+            filled
+            :color="type.color"
             label="Type"
             v-model="alarm.subtype"
             :items="type.subtypes"
@@ -72,39 +77,60 @@
                 <v-list-item-title>{{ data.item.name }}</v-list-item-title>
               </v-list-item-content>
             </template>
-            <template v-slot:selection="data">
+            <template v-slot:prepend>
               <v-icon
-                class="type-icon mr-3"
+                class="type-icon"
                 :style="{ 'background-color': type.color }"
-                v-text="data.item.icon"
+                v-text="subtype.icon"
               ></v-icon>
-              {{ data.item.name }}
             </template>
           </v-select>
           <v-text-field
+            dense
+            filled
+            single-line
             type="text"
-            label="Details"
+            :color="type.color"
+
             placeholder="Optional details"
             v-model="alarm.details"
+            prepend-icon="mdi-pencil"
           ></v-text-field>
-          <v-text-field
-            type="number"
-            label="Interval"
-            placeholder="1"
-            v-model.number="alarm.intervalAmount"
-          ></v-text-field>
-          <v-select
-            label="Type"
-            v-model="alarm.intervalType"
-            :items="[
-              { text: 'Hour', value: 'h' },
-              { text: 'Day', value: 'd' }
-            ]"
-          ></v-select>
+          <v-row>
+            <v-col cols="6" sm="4">
+              <v-text-field
+                dense
+                single-line
+                filled
+                :color="type.color"
+                type="number"
+                label="Interval"
+                placeholder="1"
+                v-model.number="alarm.intervalAmount"
+                prepend-icon="mdi-timer-outline"
+              ></v-text-field>
+            </v-col>
+            <v-col>
+              <v-select
+                dense
+                single-line
+                filled
+                :color="type.color"
+                label="Type"
+                v-model="alarm.intervalType"
+                :items="[
+                  { text: 'Hour', value: 'h' },
+                  { text: 'Day', value: 'd' }
+                ]"
+              ></v-select>
+            </v-col>
+          </v-row>
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-btn text @click="remove()" v-if="!create"> Delete </v-btn>
+        <v-btn text @click="remove()" v-if="!create" color="error">
+          Delete
+        </v-btn>
         <v-spacer></v-spacer>
         <v-btn text @click="cancel()"> Cancel </v-btn>
         <v-btn color="primary" text @click="save()"> Save </v-btn>
@@ -127,15 +153,15 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["alarms"]),
+    ...mapGetters(["alarms", "activeChild", "typeLookup", "subtypeLookup"]),
     type() {
-      return this.$store.getters.typeLookup[this.alarm.type] || {};
+      return this.typeLookup[this.alarm.type] || {};
     },
     types() {
-      return Object.values(this.$store.getters.typeLookup);
+      return Object.values(this.typeLookup);
     },
     subtype() {
-      return this.$store.getters.subtypeLookup[this.alarm.subtype] || {};
+      return this.subtypeLookup[this.alarm.subtype] || {};
     },
     index() {
       return this.alarms.findIndex((alarm) => {
@@ -182,7 +208,7 @@ export default {
       } else {
         copy[this.index] = this.alarm;
       }
-      this.$store.getters.activeChild.atomicPatch({
+      this.activeChild.atomicPatch({
         alarms: copy
       });
       this.close();
@@ -193,7 +219,7 @@ export default {
     remove() {
       const copy = this.alarms.slice(0);
       copy.splice(this.index, 1);
-      this.$store.getters.activeChild.atomicPatch({
+      this.activeChild.atomicPatch({
         alarms: copy
       });
       this.close();

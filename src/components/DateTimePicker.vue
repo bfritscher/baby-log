@@ -1,56 +1,76 @@
 <template>
-  <div>
-    <span>{{ label }}</span>
-    <v-dialog
-      ref="dialogTime"
-      v-model="dialogTime"
-      :return-value.sync="time"
-      persistent
-      width="290px"
-    >
-      <template v-slot:activator="{ on, attrs }">
-        <v-text-field
+  <v-row>
+    <v-col>
+      <v-dialog
+        ref="dialogTime"
+        v-model="dialogTime"
+        :return-value.sync="time"
+        persistent
+        width="290px"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-text-field
+            :color="color"
+            dense
+            single-line
+            filled
+            v-model="time"
+            :prepend-icon="timeIcon"
+            readonly
+            v-bind="attrs"
+            v-on="on"
+          ></v-text-field>
+        </template>
+        <v-time-picker
+          :color="color"
+          v-if="dialogTime"
           v-model="time"
-          prepend-icon="mdi-clock-time-four-outline"
-          readonly
-          v-bind="attrs"
-          v-on="on"
-        ></v-text-field>
-      </template>
-      <v-time-picker v-if="dialogTime" v-model="time" format="24hr" full-width>
-        <v-spacer></v-spacer>
-        <v-btn text color="primary" @click="dialogTime = false"> Cancel </v-btn>
-        <v-btn text color="primary" @click="$refs.dialogTime.save(time)">
-          OK
-        </v-btn>
-      </v-time-picker>
-    </v-dialog>
-
-    <v-dialog
-      ref="dialogDate"
-      v-model="dialogDate"
-      :return-value.sync="date"
-      persistent
-      width="290px"
-    >
-      <template v-slot:activator="{ on, attrs }">
-        <v-text-field
-          v-model="date"
-          prepend-icon="mdi-calendar"
-          readonly
-          v-bind="attrs"
-          v-on="on"
-        ></v-text-field>
-      </template>
-      <v-date-picker v-model="date" scrollable>
-        <v-spacer></v-spacer>
-        <v-btn text color="primary" @click="dialogDate = false"> Cancel </v-btn>
-        <v-btn text color="primary" @click="$refs.dialogDate.save(date)">
-          OK
-        </v-btn>
-      </v-date-picker>
-    </v-dialog>
-  </div>
+          format="24hr"
+          full-width
+        >
+          <v-spacer></v-spacer>
+          <v-btn text @click="dialogTime = false">
+            Cancel
+          </v-btn>
+          <v-btn text color="primary" @click="$refs.dialogTime.save(time)">
+            OK
+          </v-btn>
+        </v-time-picker>
+      </v-dialog>
+    </v-col>
+    <v-col>
+      <v-dialog
+        ref="dialogDate"
+        v-model="dialogDate"
+        :return-value.sync="date"
+        persistent
+        width="290px"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-text-field
+            dense
+            single-line
+            filled
+            v-model="date"
+            :prepend-icon="$vuetify.breakpoint.xsOnly? null : dateIcon"
+            readonly
+            v-bind="attrs"
+            v-on="on"
+            :color="color"
+          ></v-text-field>
+        </template>
+        <v-date-picker v-model="date" scrollable :color="color">
+          <v-spacer></v-spacer>
+          <v-btn text @click="dialogDate = false">
+            Cancel
+          </v-btn>
+          <v-btn text color="primary" @click="$refs.dialogDate.save(date)">
+            OK
+          </v-btn>
+        </v-date-picker>
+      </v-dialog>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -60,7 +80,16 @@ function isValidDate(d) {
 
 export default {
   name: "DateTimePicker",
-  props: ["label", "value"],
+  props: {
+    value: {},
+    timeIcon: {
+      default: "mdi-clock-time-four-outline"
+    },
+    dateIcon: {
+      default: "mdi-calendar"
+    },
+    color: {}
+  },
   data() {
     return {
       dialogTime: false,

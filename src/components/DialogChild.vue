@@ -11,19 +11,23 @@
     </template>
     <v-card>
       <v-card-title class="pa-0">
-        <v-toolbar color="primary" flat>
+        <v-toolbar color="secondary" flat>
           <v-toolbar-title>{{
             create ? "Add Child" : "Edit Child"
           }}</v-toolbar-title>
           <v-spacer></v-spacer>
-          <span v-if="!create">id: {{ child.id }}</span>
         </v-toolbar>
       </v-card-title>
       <v-card-text>
         <v-container v-if="child">
           <v-text-field
+            dense
+            single-line
+            filled
+            hide-details
             type="text"
-            label="Name"
+            prepend-icon="mdi-account"
+            placeholder="Name"
             v-model="child.name"
           ></v-text-field>
           <v-menu
@@ -37,7 +41,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="child.birthdate"
-                label="Birthday date"
+                placeholder="Birthday date"
                 prepend-icon="mdi-calendar"
                 readonly
                 v-bind="attrs"
@@ -45,6 +49,9 @@
               ></v-text-field>
             </template>
             <v-date-picker
+              dense
+              single-line
+              filled
               ref="picker"
               v-model="child.birthdate"
               :max="new Date().toISOString().substr(0, 10)"
@@ -53,14 +60,21 @@
             ></v-date-picker>
           </v-menu>
           <v-select
-            label="Gender"
+            prepend-icon="mdi-gender-male-female"
+            placeholder="Gender"
+            dense
+            single-line
+            filled
             :items="genders"
             v-model="child.gender"
           ></v-select>
+          <span v-if="!create">id: {{ child.id }}</span>
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-btn text @click="remove()" v-if="!create"> Delete </v-btn>
+        <v-btn text @click="remove()" v-if="!create" color="error">
+          Delete
+        </v-btn>
         <v-spacer></v-spacer>
         <v-btn text @click="cancel()"> Cancel </v-btn>
         <v-btn color="primary" text @click="save()">{{

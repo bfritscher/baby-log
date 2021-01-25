@@ -1,26 +1,25 @@
 <template>
   <div class="home">
-    <v-card tile>
-      <v-container>
-        <v-slide-group>
-          <v-slide-item v-for="type in config.types" :key="type.id">
-            <v-btn
-              :color="type.color"
-              depressed
-              class="ma-1 px-md-12 px-lg-16 big-type"
-              @click.stop="$store.commit('updateUI', { showTypeDialog: type })"
-            >
-              <v-icon v-text="type.icon"></v-icon>
-            </v-btn>
-          </v-slide-item>
-        </v-slide-group>
-      </v-container>
-    </v-card>
+    <v-container>
+      <v-slide-group>
+        <v-slide-item v-for="type in config.types" :key="type.id">
+          <v-btn
+            :color="type.color"
+            depressed
+            class="ma-1 px-md-12 px-lg-16 big-type"
+            @click.stop="$store.commit('updateUI', { showTypeDialog: type })"
+          >
+            <v-icon v-text="type.icon"></v-icon>
+          </v-btn>
+        </v-slide-item>
+      </v-slide-group>
+    </v-container>
+    <v-divider></v-divider>
 
-    <v-container class="grey lighten-3">
+    <v-container>
       <v-row>
         <v-col cols="12" md="6" lg="4">
-          <v-card class="my-2">
+          <v-card class="my-2" outlined>
             <v-list dense>
               <div v-for="(timer, index) in timers" :key="timer.id">
                 <v-list-item
@@ -70,7 +69,7 @@
       </v-row>
       <v-row>
         <v-col cols="12" md="6" lg="4">
-          <v-card class="my-2 fill-height">
+          <v-card class="my-2 fill-height" outlined>
             <v-card-title class="text-subtitle-1 primary--text pb-0">
               Next Activities
               <v-spacer></v-spacer>
@@ -137,7 +136,7 @@
           </v-card>
         </v-col>
         <v-col cols="12" md="6" lg="4">
-          <v-card class="my-2 fill-height">
+          <v-card class="my-2 fill-height" outlined>
             <v-card-title class="text-subtitle-1 primary--text pb-0"
               >Latest activities</v-card-title
             >
@@ -151,26 +150,24 @@
           </v-card>
         </v-col>
         <v-col cols="12" md="6" lg="4">
-          <v-card class="my-2 fill-height">
+          <v-card class="my-2 fill-height" outlined>
             <v-card-title class="text-subtitle-1 primary--text pb-0"
               >Summary for today</v-card-title
             >
-            <v-list dense class=" pb-0">
+            <v-list dense class="pb-0">
               <v-list-item>
                 <v-list-item-icon class="my-1 mr-3">
-                  <v-icon class="type-icon primary"
-                    >mdi-calendar-month</v-icon
-                  >
+                  <v-icon class="type-icon primary">mdi-calendar-month</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title>
-                  <child-age
-                    v-if="
-                      $store.getters.activeChild &&
-                      $store.getters.activeChild.birthdate
-                    "
-                    :birthdate="$store.getters.activeChild.birthdate"
-                  ></child-age>
+                    <child-age
+                      v-if="
+                        $store.getters.activeChild &&
+                        $store.getters.activeChild.birthdate
+                      "
+                      :birthdate="$store.getters.activeChild.birthdate"
+                    ></child-age>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -241,6 +238,7 @@ export default {
 
 // Layouts
 // all logs group by day refactor with timline and calendar
+// deploy server
 // test offline mode
 
 // basic stats graphs
@@ -266,6 +264,7 @@ export default {
 // Toothbrushing
 // Doctor visit
 // Other?
+// milestones icon
 // list milestones based on age?
 // https://www.thebump.com/a/baby-milestone-chart
 </script>

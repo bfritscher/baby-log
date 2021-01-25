@@ -9,7 +9,7 @@
       v-model="day"
     ></v-date-picker>
 
-    <v-card class="my-2 fill-height">
+    <v-card class="my-2 fill-height" outlined>
       <v-card-title class="text-subtitle-1 primary--text"
         >Daily summary</v-card-title
       >
@@ -18,13 +18,14 @@
       </v-card-text>
     </v-card>
 
-    <v-card class="my-2 fill-height">
+    <v-card class="my-2 fill-height" outlined>
       <v-card-title class="text-subtitle-1 primary--text"
         >Add record</v-card-title
       >
       <v-card-text>
         <v-btn
-          depressed
+          outlined
+          class="ma-2"
           v-for="type in $store.state.config.types"
           :key="type.id"
           :color="type.color"
@@ -42,7 +43,7 @@
         </v-btn>
       </v-card-text>
     </v-card>
-    <v-card class="my-2 fill-height">
+    <v-card class="my-2 fill-height" outlined>
       <v-card-title class="text-subtitle-1 primary--text">Records</v-card-title>
       <v-card-text> // TODO show records for a day </v-card-text>
     </v-card>

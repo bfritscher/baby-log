@@ -1,8 +1,9 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary">
+    <v-app-bar app color="secondary" flat>
       <img contain src="@/assets/logo.svg" height="50" width="50" />
       <v-select
+        class="flex-grow-0"
         :items="$store.state.children"
         item-text="name"
         item-value="id"
@@ -16,8 +17,6 @@
         @change="$store.dispatch('setActiveChildId', $event)"
       ></v-select>
       <v-spacer></v-spacer>
-      <v-spacer></v-spacer>
-      <v-switch v-model="$vuetify.theme.dark" inset hide-details color="accent"></v-switch>
       <dialog-settings></dialog-settings>
       <template v-slot:extension>
         <v-tabs v-model="tab" fixed-tabs color="accent">
@@ -39,19 +38,22 @@
     <dialog-type></dialog-type>
     <dialog-record></dialog-record>
     <dialog-alarm></dialog-alarm>
-    <v-main v-if="$store.state.children.length > 0" class="grey lighten-3">
+    <v-main v-if="$store.state.children.length > 0">
       <v-tabs-items
         v-model="tab"
         @change="updateRouter($event)"
-        class="grey lighten-3"
+        class="fill-height"
       >
         <v-tab-item value="/">
+          <v-divider></v-divider>
           <home></home>
         </v-tab-item>
         <v-tab-item value="/stats">
+          <v-divider></v-divider>
           <stats></stats>
         </v-tab-item>
         <v-tab-item value="/calendar">
+          <v-divider></v-divider>
           <calendar></calendar>
         </v-tab-item>
       </v-tabs-items>
@@ -114,6 +116,11 @@ export default {
   margin: 0;
 }
 
+.v-input__prepend-outer .type-icon {
+  margin-top: -3px;
+  margin-left: -6px;
+}
+
 .type-icon .v-icon__component {
   height: 20px;
   width: 20px;
@@ -129,5 +136,8 @@ export default {
   .v-input--selection-controls__input {
   margin-right: 0;
   margin-left: 16px;
+}
+.v-timeline-item__dot {
+  box-shadow: none;
 }
 </style>

@@ -7,11 +7,11 @@
     v-model="dialog"
   >
     <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on" block color="primary">All Logs</v-btn>
+      <v-btn v-bind="attrs" v-on="on" depressed block color="primary">All Logs</v-btn>
     </template>
     <v-card>
       <v-card-title class="pa-0">
-        <v-toolbar color="primary" flat>
+        <v-toolbar color="secondary" flat>
           <v-btn @click="dialog = false" icon>
             <v-icon>mdi-arrow-left</v-icon>
           </v-btn>

@@ -12,17 +12,26 @@
       <v-card-text>
         <v-container v-if="currentRecord">
           <date-time-picker
-            :label="subtype.withTimer ? 'Start' : 'Date'"
+            :color="type.color"
+            :time-icon="
+              subtype.withTimer
+                ? 'mdi-clock-start'
+                : 'mdi-clock-time-four-outline'
+            "
             v-model="currentRecord.fromDate"
           ></date-time-picker>
           <date-time-picker
+            :color="type.color"
             v-if="subtype.withTimer"
-            label="Finish"
+            :time-icon="'mdi-clock-end'"
             v-model="currentRecord.toDate"
           ></date-time-picker>
           <span v-if="!fromBeforeTo"> Finish must be after Start! </span>
           <v-select
+            :color="type.color"
             dense
+            single-line
+            filled
             label="Type"
             v-if="type && type.subtypes && type.subtypes.length > 1"
             v-model="currentRecord.subtype"
@@ -43,37 +52,55 @@
                 <v-list-item-title>{{ data.item.name }}</v-list-item-title>
               </v-list-item-content>
             </template>
-            <template v-slot:selection="data">
+            <template v-slot:prepend>
               <v-icon
-                class="type-icon mr-3"
+                class="type-icon"
                 :style="{ 'background-color': type.color }"
-                v-text="data.item.icon"
+                v-text="subtype.icon"
               ></v-icon>
-              {{ data.item.name }}
             </template>
           </v-select>
+          <v-row v-if="subtype.withAmount">
+            <v-col cols="8">
+              <v-text-field
+                dense
+                single-line
+                filled
+                :color="type.color"
+                type="number"
+                placeholder="Amount"
+                v-model.number="currentRecord.amount"
+                :prepend-icon="unitIcon"
+              ></v-text-field>
+            </v-col>
+            <v-col>
+              <v-text-field
+                dense
+                single-line
+                filled
+                :color="type.color"
+                type="text"
+                placeholder="Unit"
+                v-model="currentRecord.unit"
+              ></v-text-field>
+            </v-col>
+          </v-row>
           <v-text-field
-            v-if="subtype.withAmount"
-            type="number"
-            label="Amount"
-            v-model.number="currentRecord.amount"
-          ></v-text-field>
-          <v-text-field
-            v-if="subtype.withAmount"
+            :color="type.color"
+            dense
+            filled
+            single-line
             type="text"
-            label="Unit"
-            v-model="currentRecord.unit"
-          ></v-text-field>
-          <v-text-field
-            type="text"
-            label="Details"
             placeholder="Optional details"
+            prepend-icon="mdi-pencil"
             v-model="currentRecord.details"
           ></v-text-field>
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-btn text @click="remove()" v-if="!create"> Delete </v-btn>
+        <v-btn text @click="remove()" v-if="!create" color="error">
+          Delete
+        </v-btn>
         <v-spacer></v-spacer>
         <v-btn text @click="cancel()"> Cancel </v-btn>
         <v-btn
@@ -129,6 +156,12 @@ export default {
         }
       }
       return true;
+    },
+    unitIcon() {
+      if (this.subtype && this.subtype.withAmount) {
+        return this.$store.state.ui.unitsIcon[this.subtype.unit];
+      }
+      return "";
     }
   },
   watch: {

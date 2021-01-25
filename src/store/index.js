@@ -35,7 +35,13 @@ const store = new Vuex.Store({
       showRecordDialog: false,
       showAlarmDialog: false,
       dialogMaxWidth: 600,
-      dialogFullscreenMaxWidth: 1024
+      dialogFullscreenMaxWidth: 1024,
+      unitsIcon: {
+        weight: "mdi-weight",
+        length: "mdi-ruler",
+        volume: "mdi-water",
+        temperature: "mdi-thermometer"
+      }
     },
     user: {
       id: "logged in id?"
