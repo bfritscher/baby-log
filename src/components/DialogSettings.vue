@@ -290,8 +290,8 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
-import DialogChild from "@/components/DialogChild";
 import { saveAs } from "file-saver";
+import DialogChild from "@/components/DialogChild";
 import DatabaseService from "@/services/Database";
 
 export default {

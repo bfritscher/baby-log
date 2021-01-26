@@ -75,6 +75,15 @@ import DialogAlarm from "@/components/DialogAlarm";
 
 export default {
   name: "App",
+  components: {
+    Home,
+    Stats,
+    Calendar,
+    DialogSettings,
+    DialogRecord,
+    DialogType,
+    DialogAlarm
+  },
   data() {
     return {
       tab: null
@@ -84,15 +93,6 @@ export default {
     updateRouter(val) {
       this.$router.push(val);
     }
-  },
-  components: {
-    Home,
-    Stats,
-    Calendar,
-    DialogSettings,
-    DialogRecord,
-    DialogType,
-    DialogAlarm
   }
 };
 </script>
@@ -195,7 +195,7 @@ export default {
   font-size: 20px;
 }
 
-.extra-dense  .v-list-item .v-list-item__content {
+.extra-dense .v-list-item .v-list-item__content {
   padding-top: 8px;
   padding-bottom: 8px;
 }

@@ -48,14 +48,14 @@ import ScheduleChart from "@/components/ScheduleChart";
 
 export default {
   name: "Stats",
+  components: {
+    ScheduleChart
+  },
   data() {
     return {
       activeTypeIndex: undefined,
       chart: null
     };
-  },
-  components: {
-    ScheduleChart
   },
   computed: {
     activeType() {

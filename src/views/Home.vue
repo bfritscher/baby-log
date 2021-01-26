@@ -198,17 +198,17 @@ import DaySummary from "@/components/DaySummary";
 
 export default {
   name: "Home",
-  data() {
-    return {
-      today: new Date().toISOString()
-    };
-  },
   components: {
     DialogAllLogs,
     Record,
     ChildAge,
     Timer,
     DaySummary
+  },
+  data() {
+    return {
+      today: new Date().toISOString()
+    };
   },
   computed: {
     ...mapGetters(["typeLookup", "subtypeLookup", "activeAlarms"]),

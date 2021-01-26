@@ -29,9 +29,7 @@
           full-width
         >
           <v-spacer></v-spacer>
-          <v-btn text @click="dialogTime = false">
-            Cancel
-          </v-btn>
+          <v-btn text @click="dialogTime = false"> Cancel </v-btn>
           <v-btn text color="primary" @click="$refs.dialogTime.save(time)">
             OK
           </v-btn>
@@ -52,7 +50,7 @@
             single-line
             filled
             v-model="date"
-            :prepend-icon="$vuetify.breakpoint.xsOnly? null : dateIcon"
+            :prepend-icon="$vuetify.breakpoint.xsOnly ? null : dateIcon"
             readonly
             v-bind="attrs"
             v-on="on"
@@ -61,9 +59,7 @@
         </template>
         <v-date-picker v-model="date" scrollable :color="color">
           <v-spacer></v-spacer>
-          <v-btn text @click="dialogDate = false">
-            Cancel
-          </v-btn>
+          <v-btn text @click="dialogDate = false"> Cancel </v-btn>
           <v-btn text color="primary" @click="$refs.dialogDate.save(date)">
             OK
           </v-btn>

@@ -47,21 +47,21 @@ export default {
       sub: undefined
     };
   },
-  mounted() {
-    this.subscribe();
+  computed: {
+    ...mapGetters(["typeLookup", "subtypeLookup"])
   },
   watch: {
     day() {
       this.subscribe();
     }
   },
+  mounted() {
+    this.subscribe();
+  },
   beforeDestroy() {
     if (this.sub) {
       this.sub.unsubscribe();
     }
-  },
-  computed: {
-    ...mapGetters(["typeLookup", "subtypeLookup"])
   },
   methods: {
     async subscribe() {

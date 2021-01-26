@@ -123,12 +123,6 @@ function draw(node, records) {
 export default {
   name: "ScheduleChart",
   props: ["type"],
-  mounted() {
-    this.draw(this.$refs.chart, this.records);
-  },
-  methods: {
-    draw
-  },
   computed: {
     ...mapGetters(["typeLookup"]),
     records() {
@@ -141,6 +135,12 @@ export default {
     records() {
       this.draw(this.$refs.chart, this.records);
     }
+  },
+  mounted() {
+    this.draw(this.$refs.chart, this.records);
+  },
+  methods: {
+    draw
   }
 };
 </script>

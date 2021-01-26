@@ -212,7 +212,9 @@
                 >
                   <v-col class="pa-2">
                     <strong>{{ record.time() }}</strong>
-                    {{ subtypeLookup[record.subtype].name }}<span>, {{ record.duration() }}
+                    {{ subtypeLookup[record.subtype].name
+                    }}<span
+                      >, {{ record.duration() }}
                       <span
                         v-if="
                           subtypeLookup[record.subtype].withAmount &&
@@ -242,13 +244,16 @@
   </v-dialog>
 </template>
 <script>
+import moment from "moment";
 import { mapGetters } from "vuex";
 import Timer from "@/components/Timer";
 import { setThemeColor } from "@/services/utils";
-import moment from "moment";
 
 export default {
   name: "DialogType",
+  components: {
+    Timer
+  },
   data() {
     const defaultNbDaysHistory = 3;
     return {
@@ -260,32 +265,6 @@ export default {
       nbDaysHistory: defaultNbDaysHistory,
       defaultNbDaysHistory
     };
-  },
-  components: {
-    Timer
-  },
-  watch: {
-    type() {
-      if (!this.type) {
-        this.showDetails = false;
-        this.currentSubtype = undefined;
-        this.nbDaysHistory = this.defaultNbDaysHistory;
-        setThemeColor("#ffffff");
-      } else {
-        setThemeColor(this.type.colorDark);
-      }
-    },
-    subtype() {
-      if (!this.currentSubtype) {
-        this.showDetails = false;
-        this.details = "";
-      } else {
-        this.amount = undefined;
-        this.unit = this.subtype
-          ? this.$store.state.config.units[this.subtype.unit]
-          : undefined;
-      }
-    }
   },
   computed: {
     ...mapGetters(["typeLookup", "subtypeLookup"]),
@@ -362,6 +341,29 @@ export default {
         return days.filter((d) => d.records.length > 0);
       }
       return [];
+    }
+  },
+  watch: {
+    type() {
+      if (!this.type) {
+        this.showDetails = false;
+        this.currentSubtype = undefined;
+        this.nbDaysHistory = this.defaultNbDaysHistory;
+        setThemeColor("#ffffff");
+      } else {
+        setThemeColor(this.type.colorDark);
+      }
+    },
+    subtype() {
+      if (!this.currentSubtype) {
+        this.showDetails = false;
+        this.details = "";
+      } else {
+        this.amount = undefined;
+        this.unit = this.subtype
+          ? this.$store.state.config.units[this.subtype.unit]
+          : undefined;
+      }
     }
   },
   methods: {

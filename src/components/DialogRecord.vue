@@ -6,7 +6,9 @@
   >
     <v-card>
       <v-toolbar :color="type.color" flat>
-        <v-toolbar-title class="secondary--text">{{ type.name }}</v-toolbar-title>
+        <v-toolbar-title class="secondary--text">{{
+          type.name
+        }}</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
       <v-card-text>

@@ -106,22 +106,6 @@ export default {
       isEditActive: false
     };
   },
-  methods: {
-    toggleSelection(record) {
-      const index = this.selection.indexOf(record);
-      if (index >= 0) {
-        this.selection.splice(index, 1);
-      } else {
-        this.selection.push(record);
-      }
-    },
-    async removeSelected() {
-      for (let i = 0; i < this.selection.length; i++) {
-        await this.$store.dispatch("removeRecord", this.selection[i]);
-      }
-      this.selection = [];
-    }
-  },
   computed: {
     ...mapGetters(["typeLookup", "subtypeLookup"]),
     groupedRecordsPaged() {
@@ -163,6 +147,22 @@ export default {
         lastDateTime = currentDateTime;
       }
       return days;
+    }
+  },
+  methods: {
+    toggleSelection(record) {
+      const index = this.selection.indexOf(record);
+      if (index >= 0) {
+        this.selection.splice(index, 1);
+      } else {
+        this.selection.push(record);
+      }
+    },
+    async removeSelected() {
+      for (let i = 0; i < this.selection.length; i++) {
+        await this.$store.dispatch("removeRecord", this.selection[i]);
+      }
+      this.selection = [];
     }
   }
 };

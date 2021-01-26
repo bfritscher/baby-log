@@ -95,7 +95,6 @@
             single-line
             type="text"
             :color="type.color"
-
             placeholder="Optional details"
             v-model="alarm.details"
             prepend-icon="mdi-pencil"

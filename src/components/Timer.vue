@@ -21,17 +21,17 @@ export default {
       cancelId: undefined
     };
   },
+  computed: {
+    fromDateTime() {
+      return Math.floor(new Date(this.fromDate).getTime() / 1000);
+    }
+  },
   mounted() {
     this.updateElapsedTime();
   },
   unmounted() {
     if (this.cancelId) {
       window.cancelAnimationFrame(this.cancelId);
-    }
-  },
-  computed: {
-    fromDateTime() {
-      return Math.floor(new Date(this.fromDate).getTime() / 1000);
     }
   },
   methods: {
