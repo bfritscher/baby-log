@@ -240,7 +240,10 @@ export default {
   }
 };
 
+//+- on the right because of finger
+//save darktheme settings
 // daySummary reactivity bug
+// on timer highlight color
 
 // basic stats graphs
 // schedule graph icons for events without duration?

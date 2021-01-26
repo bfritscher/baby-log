@@ -349,7 +349,7 @@ export default {
         this.showDetails = false;
         this.currentSubtype = undefined;
         this.nbDaysHistory = this.defaultNbDaysHistory;
-        setThemeColor("#ffffff");
+        setThemeColor("#333");
       } else {
         setThemeColor(this.type.colorDark);
       }
