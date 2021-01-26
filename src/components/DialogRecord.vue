@@ -6,7 +6,7 @@
   >
     <v-card>
       <v-toolbar :color="type.color" flat>
-        <v-toolbar-title>{{ type.name }}</v-toolbar-title>
+        <v-toolbar-title class="secondary--text">{{ type.name }}</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
       <v-card-text>
@@ -44,6 +44,7 @@
               <v-list-item-icon>
                 <v-icon
                   class="type-icon"
+                  color="secondary"
                   :style="{ 'background-color': type.color }"
                   v-text="data.item.icon"
                 ></v-icon>
@@ -55,6 +56,7 @@
             <template v-slot:prepend>
               <v-icon
                 class="type-icon"
+                color="secondary"
                 :style="{ 'background-color': type.color }"
                 v-text="subtype.icon"
               ></v-icon>

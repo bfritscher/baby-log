@@ -82,6 +82,7 @@
             >
               <v-list-item-icon class="my-1 mr-3">
                 <v-icon
+                  color="secondary"
                   class="type-icon"
                   v-text="
                     alarm.subtype
@@ -137,7 +138,7 @@
 
         <v-divider></v-divider>
 
-   <v-subheader>Measure Units</v-subheader>
+        <v-subheader>Measure Units</v-subheader>
 
         <v-list>
           <v-list-item>

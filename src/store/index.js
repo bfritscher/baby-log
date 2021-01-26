@@ -297,7 +297,7 @@ const store = new Vuex.Store({
       return state.children.find((child) => child.id === state.activeChildId);
     },
     timers(state) {
-      return state.records.filter((record) => record.timer);
+      return state.records.filter((record) => record && record.timer);
     },
     latestActivityByType(state) {
       // based on hypothesis that records is already sorted desc and filtered by active child
@@ -306,7 +306,7 @@ const store = new Vuex.Store({
       const notSeenTypes = state.config.types.map((type) => type.id);
       for (let i = 0; i < state.records.length; i++) {
         const record = state.records[i];
-        if (record.timer) continue;
+        if (!record || record.timer) continue;
         const index = notSeenTypes.indexOf(record.type);
         if (index >= 0) {
           latestActivities[record.type] = record;
@@ -325,7 +325,7 @@ const store = new Vuex.Store({
       const notSeenSubtypes = Object.keys(getters.subtypeLookup);
       for (let i = 0; i < state.records.length; i++) {
         const record = state.records[i];
-        if (record.timer) continue;
+        if (!record || record.timer) continue;
         const index = notSeenSubtypes.indexOf(record.subtype);
         if (index >= 0) {
           latestActivities[record.subtype] = record;
@@ -458,11 +458,11 @@ const store = new Vuex.Store({
           filteredData[key] = data[key] ? data[key] : undefined;
         }
       }
-      db.records.atomicUpsert(filteredData);
+      return db.records.atomicUpsert(filteredData);
     },
     async removeRecord(context, data) {
       const db = await DatabaseService.get();
-      db.records
+      return db.records
         .findOne({
           selector: { id: data.id }
         })
@@ -482,11 +482,11 @@ const store = new Vuex.Store({
         }
       }
       context.dispatch("setActiveChildId", filteredData.id);
-      db.children.atomicUpsert(filteredData);
+      return db.children.atomicUpsert(filteredData);
     },
     async removeChild(context, data) {
       const db = await DatabaseService.get();
-      db.children
+      return db.children
         .findOne({
           selector: { id: data.id }
         })

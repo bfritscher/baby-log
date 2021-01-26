@@ -122,6 +122,7 @@ function draw(node, records) {
 }
 export default {
   name: "ScheduleChart",
+  props: ["type"],
   mounted() {
     this.draw(this.$refs.chart, this.records);
   },
@@ -131,7 +132,9 @@ export default {
   computed: {
     ...mapGetters(["typeLookup"]),
     records() {
-      return this.$store.state.records;
+      return this.$store.state.records.filter((r) =>
+        this.type.id === "ALL" ? true : r.type === this.type.id
+      );
     }
   },
   watch: {

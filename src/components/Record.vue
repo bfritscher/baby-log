@@ -4,6 +4,7 @@
   >
     <v-list-item-icon class="my-1 mr-3">
       <v-icon
+        color="secondary"
         class="type-icon"
         v-text="subtype.icon"
         :style="{ 'background-color': type.color }"

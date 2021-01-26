@@ -97,6 +97,39 @@ export default {
 };
 </script>
 <style>
+.big-type {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  min-height: 56px !important;
+}
+.big-type .v-icon__component {
+  width: 30px;
+  height: 30px;
+}
+
+.pulse {
+  animation-name: pulse;
+  animation-iteration-count: infinite;
+  animation-duration: 2s;
+  animation-timing-function: linear;
+  transform-origin: 50% 50%;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(0.9);
+  }
+  80% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 .btn-icon {
   justify-content: left;
   text-transform: none;
@@ -116,6 +149,11 @@ export default {
   margin: 0;
 }
 
+.type-icon.small {
+  height: 24px;
+  width: 24px;
+}
+
 .v-input__prepend-outer .type-icon {
   margin-top: -3px;
   margin-left: -6px;
@@ -124,6 +162,42 @@ export default {
 .type-icon .v-icon__component {
   height: 20px;
   width: 20px;
+}
+
+.type-icon.small .v-icon__component {
+  height: 16px;
+  width: 16px;
+}
+
+.extra-dense .v-list-item {
+  min-height: 30px;
+  padding: 0;
+}
+
+.extra-dense .v-list-item .v-list-item__icon {
+  margin-top: 3px;
+  margin-bottom: 3px;
+  margin-right: 12px;
+}
+
+.extra-dense .v-list-item .v-list-item__action {
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+.extra-dense .v-list-item .v-list-item__action .v-btn {
+  width: 24px;
+  height: 24px;
+}
+.extra-dense .v-list-item .v-list-item__action .v-btn .v-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+}
+
+.extra-dense  .v-list-item .v-list-item__content {
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 .v-input--reverse .v-input__slot {

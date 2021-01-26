@@ -6,7 +6,7 @@
   >
     <v-card>
       <v-toolbar :color="type.color" flat>
-        <v-toolbar-title>{{
+        <v-toolbar-title class="secondary--text">{{
           create ? "Add Alarm" : "Edit Alarm"
         }}</v-toolbar-title>
         <v-spacer></v-spacer>
@@ -37,6 +37,7 @@
               <v-list-item-icon>
                 <v-icon
                   class="type-icon"
+                  color="secondary"
                   :style="{ 'background-color': data.item.color }"
                   v-text="data.item.icon"
                 ></v-icon>
@@ -48,6 +49,7 @@
             <template v-slot:prepend>
               <v-icon
                 class="type-icon"
+                color="secondary"
                 :style="{ 'background-color': type.color }"
                 v-text="type.icon"
               ></v-icon>
@@ -69,6 +71,7 @@
               <v-list-item-icon>
                 <v-icon
                   class="type-icon"
+                  color="secondary"
                   :style="{ 'background-color': type.color }"
                   v-text="data.item.icon"
                 ></v-icon>
@@ -80,6 +83,7 @@
             <template v-slot:prepend>
               <v-icon
                 class="type-icon"
+                color="secondary"
                 :style="{ 'background-color': type.color }"
                 v-text="subtype.icon"
               ></v-icon>

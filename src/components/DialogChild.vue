@@ -21,6 +21,7 @@
       <v-card-text>
         <v-container v-if="child">
           <v-text-field
+
             dense
             single-line
             filled

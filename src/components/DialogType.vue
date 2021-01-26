@@ -13,9 +13,11 @@
         <div class="flex">
           <v-toolbar :color="type.color" flat>
             <v-btn @click="close()" icon>
-              <v-icon>mdi-arrow-left</v-icon>
+              <v-icon color="secondary">mdi-arrow-left</v-icon>
             </v-btn>
-            <v-toolbar-title>{{ type.name }}</v-toolbar-title>
+            <v-toolbar-title class="secondary--text">{{
+              type.name
+            }}</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-btn
               v-if="currentSubtype"
@@ -32,10 +34,10 @@
                 })
               "
             >
-              <v-icon>mdi-plus</v-icon>
+              <v-icon color="secondary">mdi-plus</v-icon>
             </v-btn>
             <v-btn v-if="$vuetify.breakpoint.mdAndUp" @click="close()" icon>
-              <v-icon>mdi-close</v-icon>
+              <v-icon color="secondary">mdi-close</v-icon>
             </v-btn>
           </v-toolbar>
           <v-container fluid>
@@ -57,6 +59,7 @@
                     elevation="0"
                   >
                     <v-icon
+                      color="secondary"
                       v-text="subtype.icon"
                       :style="{ 'background-color': type.color }"
                     ></v-icon>
@@ -70,6 +73,7 @@
                 <v-col cols="5" md="4" lg="3" xl="2">
                   <v-btn block class="btn-icon" rounded elevation="0">
                     <v-icon
+                      color="secondary"
                       v-text="subtype.icon"
                       :style="{ 'background-color': type.color }"
                     ></v-icon>
@@ -144,6 +148,7 @@
               v-if="timer"
               @click="endTimer()"
               :color="type.color"
+              class="secondary--text"
               >Finish</v-btn
             >
 
@@ -172,7 +177,7 @@
           <v-timeline dense align-top class="pt-0 ml-n8">
             <template v-for="(record, i) in day.records">
               <v-timeline-item
-                class="pb-1 ml-n6"
+                class="pb-1 ml-n10"
                 hide-dot
                 v-if="record.durationBetween"
                 :key="i"
@@ -182,29 +187,32 @@
               <v-timeline-item
                 class="pb-1"
                 v-else
-                :value="record"
                 :key="i"
                 fill-dot
+                small
                 :color="typeLookup[record.type].color"
-                :icon="
-                  subtypeLookup[
-                    record.subtype === 'NONE' ? record.type : record.subtype
-                  ].icon
-                "
               >
+                <template v-slot:icon>
+                  <v-icon
+                    class="type-icon small"
+                    color="secondary"
+                    v-text="
+                      subtypeLookup[
+                        record.subtype === 'NONE' ? record.type : record.subtype
+                      ].icon
+                    "
+                  >
+                  </v-icon>
+                </template>
                 <v-row
-                  class="pt-1"
+                  class="pt-1 ml-n6"
                   @click.stop="
                     $store.commit('updateUI', { showRecordDialog: record })
                   "
                 >
-                  <v-col cols="3">
+                  <v-col class="pa-2">
                     <strong>{{ record.time() }}</strong>
-                  </v-col>
-                  <v-col>
-                    <strong>{{ subtypeLookup[record.subtype].name }}</strong>
-                    <span class="caption">
-                      {{ record.duration() }}
+                    {{ subtypeLookup[record.subtype].name }}<span>, {{ record.duration() }}
                       <span
                         v-if="
                           subtypeLookup[record.subtype].withAmount &&
@@ -324,7 +332,7 @@ export default {
           if (
             currentDateTime.getFullYear() !== lastDateTime.getFullYear() ||
             currentDateTime.getMonth() !== lastDateTime.getMonth() ||
-            currentDateTime.getDay() !== lastDateTime.getDay()
+            currentDateTime.getDate() !== lastDateTime.getDate()
           ) {
             const dateDiff = today - new Date(currentDateTime.toDateString());
             let dateFormat = "Do MMMM, dddd";

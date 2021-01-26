@@ -1,8 +1,30 @@
 <template>
   <v-container>
+    <v-slide-group v-model="activeTypeIndex" center-active>
+      <v-slide-item
+        v-for="type in $store.state.config.types"
+        :key="type.id"
+        v-slot="{ active, toggle }"
+      >
+        <v-btn
+          :color="type.color"
+          :depressed="active"
+          :outlined="!active"
+          class="ma-1 px-md-12 px-lg-16 big-type"
+          @click="toggle"
+        >
+          <v-icon
+            v-text="type.icon"
+            :color="active ? 'secondary' : null"
+          ></v-icon>
+        </v-btn>
+      </v-slide-item>
+    </v-slide-group>
+    <h2 class="subtitle-1 primary--text">{{ activeType.name }}</h2>
     // statitics for last 7, 14, 30 day or custom // avg subtype count per day
     // avg subtype duration per day
-    <div style="width: 30%">
+    <div v-if="activeType.id === 'GROWTH'">
+      // TODO move/refactor test chart
       <canvas ref="chart" width="400" height="400"></canvas>
       <v-btn @click="zoom({ x: 2, y: 95, stepSize: 0.1 })">0-2</v-btn>
       <v-btn @click="zoom({ x: 3, y: 120, stepSize: 0.25 })">0-4</v-btn>
@@ -10,7 +32,7 @@
       <v-btn @click="test()">testdarkmode</v-btn>
     </div>
     pattern by hours
-    <schedule-chart></schedule-chart>
+    <schedule-chart :type="activeType"></schedule-chart>
     duration by day bar chart<br />
     amount by day bar chart
 
@@ -28,11 +50,23 @@ export default {
   name: "Stats",
   data() {
     return {
+      activeTypeIndex: undefined,
       chart: null
     };
   },
   components: {
     ScheduleChart
+  },
+  computed: {
+    activeType() {
+      if (this.activeTypeIndex === undefined) {
+        return {
+          id: "ALL",
+          name: "All in One"
+        };
+      }
+      return this.$store.state.config.types[this.activeTypeIndex];
+    }
   },
   methods: {
     test() {
@@ -55,6 +89,7 @@ export default {
     }
   },
   async mounted() {
+    /*
     const data = await fetch("/growth_tables/girl_height.json").then((r) =>
       r.json()
     );
@@ -193,6 +228,7 @@ export default {
       },
       plugins: [chartJsPluginZoom]
     });
+    */
   }
 };
 </script>

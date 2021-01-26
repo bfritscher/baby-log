@@ -10,6 +10,7 @@
       <v-list-item-icon class="my-1 mr-3">
         <v-icon
           class="type-icon"
+          color="secondary"
           v-text="typeLookup[group.type].icon"
           :style="{ 'background-color': typeLookup[group.type].color }"
         ></v-icon>

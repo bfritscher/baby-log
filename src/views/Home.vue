@@ -9,7 +9,7 @@
             class="ma-1 px-md-12 px-lg-16 big-type"
             @click.stop="$store.commit('updateUI', { showTypeDialog: type })"
           >
-            <v-icon v-text="type.icon"></v-icon>
+            <v-icon v-text="type.icon" color="secondary"></v-icon>
           </v-btn>
         </v-slide-item>
       </v-slide-group>
@@ -32,6 +32,7 @@
                   <v-list-item-icon>
                     <v-icon
                       class="pulse type-icon"
+                      color="secondary"
                       v-text="subtypeLookup[timer.subtype].icon"
                       :style="{
                         'background-color': typeLookup[timer.type].color
@@ -93,6 +94,7 @@
                 <v-list-item-icon class="my-1 mr-3">
                   <v-icon
                     class="type-icon"
+                    color="secondary"
                     v-text="
                       alarm.subtype
                         ? subtypeLookup[alarm.subtype].icon
@@ -157,7 +159,9 @@
             <v-list dense class="pb-0">
               <v-list-item>
                 <v-list-item-icon class="my-1 mr-3">
-                  <v-icon class="type-icon primary">mdi-calendar-month</v-icon>
+                  <v-icon class="type-icon primary" color="secondary"
+                    >mdi-calendar-month</v-icon
+                  >
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title>
@@ -236,8 +240,6 @@ export default {
   }
 };
 
-// Layouts
-// all logs group by day refactor with timline and calendar
 // deploy server
 // test offline mode
 
@@ -268,38 +270,3 @@ export default {
 // list milestones based on age?
 // https://www.thebump.com/a/baby-milestone-chart
 </script>
-<style>
-.big-type {
-  width: 60px !important;
-  height: 60px !important;
-  min-width: 60px !important;
-  min-height: 60px !important;
-}
-.big-type .v-icon__component {
-  width: 30px;
-  height: 30px;
-}
-
-.pulse {
-  animation-name: pulse;
-  animation-iteration-count: infinite;
-  animation-duration: 2s;
-  animation-timing-function: linear;
-  transform-origin: 50% 50%;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  20% {
-    transform: scale(0.9);
-  }
-  80% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-</style>
