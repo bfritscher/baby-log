@@ -17,7 +17,7 @@
     <v-divider></v-divider>
 
     <v-container>
-      <v-row>
+      <v-row v-if="timers && timers.length > 0">
         <v-col cols="12" md="6" lg="4">
           <v-card class="my-2" outlined>
             <v-list dense>
@@ -240,8 +240,7 @@ export default {
   }
 };
 
-// deploy server
-// test offline mode
+// daySummary reactivity bug
 
 // basic stats graphs
 // schedule graph icons for events without duration?
