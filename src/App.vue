@@ -21,15 +21,15 @@
       <template v-slot:extension>
         <v-tabs v-model="tab" fixed-tabs color="accent">
           <v-tabs-slider></v-tabs-slider>
-          <v-tab :to="{ name: 'Home' }" exact>
+          <v-tab to="/" exact>
             <v-icon>mdi-home</v-icon>
           </v-tab>
 
-          <v-tab :to="{ name: 'Stats' }">
+          <v-tab to="/stats">
             <v-icon>mdi-chart-timeline-variant</v-icon>
           </v-tab>
 
-          <v-tab :to="{ name: 'Calendar' }">
+          <v-tab to="/calendar">
             <v-icon>mdi-calendar-today</v-icon>
           </v-tab>
         </v-tabs>
@@ -58,7 +58,7 @@
         </v-tab-item>
       </v-tabs-items>
     </v-main>
-    <v-main v-if="$store.state.children.length == 0 && $store.state.loaded">
+    <v-main v-if="$store.state.children.length === 0 && $store.state.loaded">
       <v-container> add Child or sync url </v-container>
     </v-main>
   </v-app>
