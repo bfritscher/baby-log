@@ -14,5 +14,7 @@ module.exports = {
   transpileDependencies: ["vuetify"],
   configureWebpack: {
     plugins: webpackPlugins
-  }
+  },
+  publicPath:
+    process.env.NODE_ENV === "production" ? "/baby-log/" : "/"
 };

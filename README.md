@@ -1,4 +1,4 @@
-# baby-tracker
+# baby-log
 
 server livesync
 server api actions
