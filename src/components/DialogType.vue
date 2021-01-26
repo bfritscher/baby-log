@@ -171,7 +171,7 @@
           <v-divider></v-divider>
         </div>
       </v-card-title>
-      <v-card-text>
+      <v-card-text class="min-height">
         <div v-for="(day, i) in timelineRecordsPaged" :key="i">
           <p class="primary--text pt-3">{{ day.day }}</p>
           <v-timeline dense align-top class="pt-0 ml-n8">
@@ -213,18 +213,18 @@
                   <v-col class="pa-2">
                     <strong>{{ record.time() }}</strong>
                     {{ subtypeLookup[record.subtype].name
-                    }}<span
+                    }}<span v-if="record.toDate"
                       >, {{ record.duration() }}
-                      <span
-                        v-if="
-                          subtypeLookup[record.subtype].withAmount &&
-                          record.amount
-                        "
-                      >
-                        {{ record.amount }}{{ record.unit }}
-                      </span>
-                      {{ record.details }}
                     </span>
+                    <span
+                      v-if="
+                        subtypeLookup[record.subtype].withAmount &&
+                        record.amount
+                      "
+                    >
+                      {{ record.amount }}{{ record.unit }}
+                    </span>
+                    <span v-if="record.details">, {{ record.details }} </span>
                   </v-col>
                 </v-row>
               </v-timeline-item>
@@ -423,3 +423,8 @@ export default {
   }
 };
 </script>
+<style scoped>
+.min-height {
+  min-height: 600px;
+}
+</style>
