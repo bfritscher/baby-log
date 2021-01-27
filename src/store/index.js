@@ -491,7 +491,7 @@ const store = new Vuex.Store({
           selector: { id: data.id }
         })
         .remove();
-      // TODO: remove and purge records belonging to child
+      // TODO: #4 remove and purge records belonging to child
     },
     setActiveChildId(context, id) {
       context.commit("setActiveChildId", id);

@@ -51,7 +51,7 @@ function draw(node, records) {
   function formatHour(d) {
     const hour = d / 3600;
     return hour;
-    // TODO: if locales US return hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : (hour % 12) + "";
+    // TODO: #1 if locales US return hour === 0 ? "12 AM" : hour === 12 ? "12 PM" : (hour % 12) + "";
   }
 
   const xAxis = (g) =>
@@ -94,11 +94,11 @@ function draw(node, records) {
 
   g.append("g").call(yAxis);
 
-  // TODO us locale const formatDate = d3.timeFormat("%B %-d, %-I %p");
+  // TODO: #1 us locale const formatDate = d3.timeFormat("%B %-d, %-I %p");
   const formatDate = d3.timeFormat("%-d %B, %H:%M");
 
-  // TODO: icons for events without duratin
-  // TODO: legends
+  // TODO: #2 icons for events without duration
+  // TODO: #3 legends
   g.append("g")
     .selectAll("rect")
     .data(data)

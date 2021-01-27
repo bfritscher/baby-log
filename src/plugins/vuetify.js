@@ -1,5 +1,4 @@
 import Vue from "vue";
-// TODO: only import used icons?
 import "@mdi/font/css/materialdesignicons.css";
 import Vuetify from "vuetify/lib/framework";
 import Alphabet from "../components/icons/Alphabet";

@@ -15,6 +15,5 @@ module.exports = {
   configureWebpack: {
     plugins: webpackPlugins
   },
-  publicPath:
-    process.env.NODE_ENV === "production" ? "/baby-log/" : "/"
+  publicPath: process.env.NODE_ENV === "production" ? "/baby-log/" : "/"
 };

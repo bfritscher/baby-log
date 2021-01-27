@@ -240,9 +240,8 @@ export default {
   }
 };
 
-//+- on the right because of finger
-//save darktheme settings
-// daySummary reactivity bug
+// TODO: #8 FIX  daySummary reactivity bug
+
 // on timer highlight color
 
 // basic stats graphs

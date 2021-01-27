@@ -124,6 +124,7 @@
         <v-subheader>UI Options</v-subheader>
         <v-list>
           <v-list-item>
+            <!-- // TODO: #7 save darktheme settings -->
             <v-list-item-content> Dark Mode </v-list-item-content>
             <v-list-item-action>
               <v-switch

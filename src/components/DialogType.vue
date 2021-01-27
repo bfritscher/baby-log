@@ -34,6 +34,7 @@
                 })
               "
             >
+              <!-- // TODO: #6 +- on the right because of finger -->
               <v-icon color="secondary">mdi-plus</v-icon>
             </v-btn>
             <v-btn v-if="$vuetify.breakpoint.mdAndUp" @click="close()" icon>

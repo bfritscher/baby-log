@@ -24,7 +24,7 @@
     // statitics for last 7, 14, 30 day or custom // avg subtype count per day
     // avg subtype duration per day
     <div v-if="activeType.id === 'GROWTH'">
-      // TODO move/refactor test chart
+      // TODO: #5 move/refactor test chart
       <canvas ref="chart" width="400" height="400"></canvas>
       <v-btn @click="zoom({ x: 2, y: 95, stepSize: 0.1 })">0-2</v-btn>
       <v-btn @click="zoom({ x: 3, y: 120, stepSize: 0.25 })">0-4</v-btn>
@@ -93,8 +93,8 @@ export default {
     const data = await fetch("/growth_tables/girl_height.json").then((r) =>
       r.json()
     );
-    // TODO limits different inn weight or height
-    // TODO axis labels
+    // TODO: #5 limits different inn weight or height
+    // TODO: #5 axis labels
     this.chart = new Chart(this.$refs.chart, {
       type: "scatter",
       data: {
