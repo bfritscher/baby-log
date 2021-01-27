@@ -245,6 +245,7 @@
 </template>
 <script>
 import moment from "moment";
+import humanizeDuration from "humanize-duration";
 import { mapGetters } from "vuex";
 import Timer from "@/components/Timer";
 import { setThemeColor } from "@/services/utils";
@@ -331,7 +332,10 @@ export default {
           const duration = lastDateTime - currentDateTime;
           if (duration > 5 * 3600) {
             dayRecords.push({
-              durationBetween: moment.duration(duration).humanize()
+              durationBetween: humanizeDuration(duration, {
+                units: ["y", "mo", "w", "d", "h", "m"],
+                round: true
+              })
             });
           }
 
