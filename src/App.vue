@@ -46,15 +46,15 @@
       >
         <v-tab-item value="/">
           <v-divider></v-divider>
-          <home></home>
+          <home v-if="tab === '/'"></home>
         </v-tab-item>
         <v-tab-item value="/stats">
           <v-divider></v-divider>
-          <stats></stats>
+          <stats v-if="tab === '/stats'"></stats>
         </v-tab-item>
         <v-tab-item value="/calendar">
           <v-divider></v-divider>
-          <calendar></calendar>
+          <calendar v-if="tab === '/calendar'"></calendar>
         </v-tab-item>
       </v-tabs-items>
     </v-main>
