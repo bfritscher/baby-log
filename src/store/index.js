@@ -11,6 +11,7 @@ Vue.use(Vuex);
 const BABY_TRACKER_ACTIVE_CHILD_ID = "BABY_TRACKER_ACTIVE_CHILD_ID";
 const BABY_TRACKER_REMOTE_URL = "BABY_TRACKER_REMOTE_URL";
 const BABY_TRACKER_UNITS = "BABY_TRACKER_UNITS";
+const BABY_TRACKER_TYPES_ORDER = "BABY_TRACKER_TYPES_ORDER";
 
 const default_units = {
   weight: "kg",
@@ -27,6 +28,13 @@ if (units) {
   }
 }
 units = Object.assign({}, default_units, units);
+
+let typesOrder = localStorage.getItem(BABY_TRACKER_TYPES_ORDER);
+try {
+  typesOrder = JSON.parse(typesOrder || "[]");
+} catch (e) {
+  typesOrder = [];
+}
 
 const store = new Vuex.Store({
   state: {
@@ -65,6 +73,7 @@ const store = new Vuex.Store({
         volume: 5,
         temperature: 0.5
       },
+      typesOrder,
       types: [
         {
           id: "FEEDING",
@@ -293,6 +302,20 @@ const store = new Vuex.Store({
         return dict;
       }, {});
     },
+    typesSorted(state) {
+      const typesSorted = [];
+      const availableTypes = state.config.types.slice(0);
+      state.config.typesOrder.forEach((typeId) => {
+        const index = availableTypes.findIndex((type) => type.id === typeId);
+        if (index >= 0) {
+          typesSorted.push(availableTypes.splice(index, 1)[0]);
+        }
+      });
+      availableTypes.forEach((type) => {
+        typesSorted.push(type);
+      });
+      return typesSorted;
+    },
     activeChild(state) {
       return state.children.find((child) => child.id === state.activeChildId);
     },
@@ -429,6 +452,13 @@ const store = new Vuex.Store({
       localStorage.setItem(
         BABY_TRACKER_UNITS,
         JSON.stringify(state.config.units)
+      );
+    },
+    setTypesOrder(state, payload) {
+      state.config.typesOrder = payload;
+      localStorage.setItem(
+        BABY_TRACKER_TYPES_ORDER,
+        JSON.stringify(state.config.typesOrder)
       );
     }
   },

@@ -217,6 +217,35 @@
 
         <v-divider></v-divider>
 
+        <v-subheader>Activity Order</v-subheader>
+
+        <v-list dense>
+          <draggable v-model="typesSorted" handle=".v-list-item__action">
+            <transition-group type="transition">
+              <v-list-item v-for="type in typesSorted" :key="type.id">
+                <v-list-item-icon>
+                  <v-icon
+                    class="type-icon"
+                    :style="{
+                      'background-color': type.color
+                    }"
+                    v-text="type.icon"
+                    color="secondary"
+                  ></v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  {{ type.name }}
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-icon>mdi-drag-horizontal-variant</v-icon>
+                </v-list-item-action>
+              </v-list-item>
+            </transition-group>
+          </draggable>
+        </v-list>
+
+        <v-divider></v-divider>
+
         <v-subheader>Remote Sync</v-subheader>
         <v-list two-line>
           <v-list-item>
@@ -291,6 +320,7 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
+import draggable from "vuedraggable";
 import { saveAs } from "file-saver";
 import DialogChild from "@/components/DialogChild";
 import DatabaseService from "@/services/Database";
@@ -298,6 +328,7 @@ import DatabaseService from "@/services/Database";
 export default {
   name: "DialogSettings",
   components: {
+    draggable,
     DialogChild
   },
   data() {
@@ -312,7 +343,18 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["alarms", "typeLookup", "subtypeLookup"])
+    ...mapGetters(["alarms", "typeLookup", "subtypeLookup"]),
+    typesSorted: {
+      get() {
+        return this.$store.getters.typesSorted;
+      },
+      set(results) {
+        this.$store.commit(
+          "setTypesOrder",
+          results.map((type) => type.id)
+        );
+      }
+    }
   },
   watch: {
     $route: {

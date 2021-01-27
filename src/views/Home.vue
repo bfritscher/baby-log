@@ -2,7 +2,7 @@
   <div class="home">
     <v-container>
       <v-slide-group>
-        <v-slide-item v-for="type in config.types" :key="type.id">
+        <v-slide-item v-for="type in typesSorted" :key="type.id">
           <v-btn
             :color="type.color"
             depressed
@@ -211,12 +211,14 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["typeLookup", "subtypeLookup", "activeAlarms"]),
+    ...mapGetters([
+      "typeLookup",
+      "subtypeLookup",
+      "activeAlarms",
+      "typesSorted"
+    ]),
     timers() {
       return this.$store.state.timers;
-    },
-    config() {
-      return this.$store.state.config;
     }
   },
   methods: {
