@@ -1,4 +1,5 @@
 import moment from "moment";
+import humanizeDuration from "humanize-duration";
 
 import { createRxDatabase, addRxPlugin } from "rxdb/plugins/core";
 
@@ -57,9 +58,10 @@ async function _create() {
           if (!this.toDate) {
             return "";
           }
-          return moment
-            .duration(moment(this.toDate).diff(this.fromDate))
-            .humanize();
+          return humanizeDuration(this.durationRaw(), {
+            units: ["y", "mo", "w", "d", "h", "m"],
+            round: true
+          });
         }
       }
     },
