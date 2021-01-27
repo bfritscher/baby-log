@@ -271,7 +271,8 @@ export default {
       currentSubtype: undefined,
       nbDaysHistory: defaultNbDaysHistory,
       defaultNbDaysHistory,
-      timer: undefined
+      timer: undefined,
+      isLoading: true
     };
   },
   computed: {
@@ -292,7 +293,7 @@ export default {
       return "";
     },
     timelineRecordsPaged() {
-      return this.timelineRecords.slice(0, this.nbDaysHistory);
+      return this.isLoading ? [] : this.timelineRecords.slice(0, this.nbDaysHistory);
     },
     timelineRecords() {
       if (this.type) {
@@ -355,8 +356,12 @@ export default {
         this.showDetails = false;
         this.currentSubtype = undefined;
         this.nbDaysHistory = this.defaultNbDaysHistory;
+        this.isLoading = true;
         setThemeColor("#333");
       } else {
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 300);
         this.timer = this.$store.state.timers.find((record) => {
           return record.type === this.type.id;
         });
