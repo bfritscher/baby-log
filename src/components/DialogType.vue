@@ -71,7 +71,13 @@
             <div v-else>
               <v-row class="align-end mb-3">
                 <v-col cols="5" md="4" lg="3" xl="2">
-                  <v-btn block class="btn-icon" rounded elevation="0" :color="type.colorLight">
+                  <v-btn
+                    block
+                    class="btn-icon"
+                    rounded
+                    elevation="0"
+                    :color="type.colorLight"
+                  >
                     <v-icon
                       color="secondary"
                       v-text="subtype.icon"
