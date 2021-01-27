@@ -86,54 +86,58 @@
               </v-btn>
             </v-card-title>
             <v-list dense>
-              <v-list-item
-                v-for="(alarm, i) in activeAlarms"
-                :key="i"
-                @click.stop="handleAlarmClick(alarm)"
-              >
-                <v-list-item-icon class="my-1 mr-3">
-                  <v-icon
-                    class="type-icon"
-                    color="secondary"
-                    v-text="
-                      alarm.subtype
-                        ? subtypeLookup[alarm.subtype].icon
-                        : typeLookup[alarm.type].icon
-                    "
-                    :style="{
-                      'background-color': typeLookup[alarm.type].color
-                    }"
-                  ></v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ typeLookup[alarm.type].name }}
-                    <span v-if="alarm.subtype">{{
-                      subtypeLookup[alarm.subtype].name
-                    }}</span>
-                    {{ alarm.details }} <b>{{ alarm.durationToNextText }}</b>
-                  </v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-action class="ma-0">
-                  <v-tooltip bottom open-delay="600">
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        icon
-                        @click.stop="
-                          $store.commit('updateUI', {
-                            showAlarmDialog: alarm
-                          })
-                        "
-                        v-bind="attrs"
-                        v-on="on"
-                      >
-                        <v-icon>mdi-dots-vertical</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>Edit Alarm</span>
-                  </v-tooltip>
-                </v-list-item-action>
-              </v-list-item>
+              <v-slide-x-reverse-transition group>
+                <v-list-item
+                  v-for="(alarm) in activeAlarms.filter(
+                    (a) => !clickedAlarms.includes(a)
+                  )"
+                  :key="alarm.id"
+                  @click.stop="handleAlarmClick(alarm)"
+                >
+                  <v-list-item-icon class="my-1 mr-3">
+                    <v-icon
+                      class="type-icon"
+                      color="secondary"
+                      v-text="
+                        alarm.subtype
+                          ? subtypeLookup[alarm.subtype].icon
+                          : typeLookup[alarm.type].icon
+                      "
+                      :style="{
+                        'background-color': typeLookup[alarm.type].color
+                      }"
+                    ></v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      {{ typeLookup[alarm.type].name }}
+                      <span v-if="alarm.subtype">{{
+                        subtypeLookup[alarm.subtype].name
+                      }}</span>
+                      {{ alarm.details }} <b>{{ alarm.durationToNextText }}</b>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                  <v-list-item-action class="ma-0">
+                    <v-tooltip bottom open-delay="600">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          icon
+                          @click.stop="
+                            $store.commit('updateUI', {
+                              showAlarmDialog: alarm
+                            })
+                          "
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          <v-icon>mdi-dots-vertical</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Edit Alarm</span>
+                    </v-tooltip>
+                  </v-list-item-action>
+                </v-list-item>
+              </v-slide-x-reverse-transition>
             </v-list>
           </v-card>
         </v-col>
@@ -207,7 +211,8 @@ export default {
   },
   data() {
     return {
-      today: new Date().toISOString()
+      today: new Date().toISOString(),
+      clickedAlarms: []
     };
   },
   computed: {
@@ -222,7 +227,7 @@ export default {
     }
   },
   methods: {
-    async handleAlarmClick(alarm) {
+    handleAlarmClick(alarm) {
       if (alarm.subtype) {
         const record = {
           type: alarm.type,
@@ -231,8 +236,12 @@ export default {
         if (alarm.details) {
           record.details = alarm.details;
         }
-        const rxDocument = await this.$store.dispatch("createRecord", record);
-        rxDocument.save();
+        this.clickedAlarms.push(alarm);
+        this.$nextTick(async () => {
+          const rxDocument = await this.$store.dispatch("createRecord", record);
+          rxDocument.save();
+          this.clickedAlarms.splice(this.clickedAlarms.indexOf(alarm), 1);
+        });
       } else {
         this.$store.commit("updateUI", {
           showTypeDialog: this.typeLookup[alarm.type]
