@@ -34,7 +34,6 @@
                 })
               "
             >
-              <!-- // TODO: #6 +- on the right because of finger -->
               <v-icon color="secondary">mdi-plus</v-icon>
             </v-btn>
             <v-btn v-if="$vuetify.breakpoint.mdAndUp" @click="close()" icon>
@@ -72,7 +71,7 @@
             <div v-else>
               <v-row class="align-end mb-3">
                 <v-col cols="5" md="4" lg="3" xl="2">
-                  <v-btn block class="btn-icon" rounded elevation="0">
+                  <v-btn block class="btn-icon" rounded elevation="0" :color="type.colorLight">
                     <v-icon
                       color="secondary"
                       v-text="subtype.icon"
@@ -95,19 +94,7 @@
                 </v-col>
               </v-row>
               <v-row v-if="subtype.withAmount">
-                <v-col class="text-right" cols="3">
-                  <v-btn
-                    icon
-                    @click="changeAmount(-1)"
-                    :disabled="amount === 0"
-                  >
-                    <v-icon>mdi-minus</v-icon>
-                  </v-btn>
-                  <v-btn icon @click="changeAmount(1)">
-                    <v-icon>mdi-plus</v-icon>
-                  </v-btn>
-                </v-col>
-                <v-col cols="7" md="4">
+                <v-col cols="5" md="4">
                   <v-text-field
                     dense
                     single-line
@@ -119,6 +106,18 @@
                     placeholder="Amount"
                     v-model.number="amount"
                   ></v-text-field>
+                </v-col>
+                <v-col class="text-left" cols="4" md="2">
+                  <v-btn
+                    icon
+                    @click="changeAmount(-1)"
+                    :disabled="amount === 0"
+                  >
+                    <v-icon>mdi-minus</v-icon>
+                  </v-btn>
+                  <v-btn icon @click="changeAmount(1)">
+                    <v-icon>mdi-plus</v-icon>
+                  </v-btn>
                 </v-col>
                 <v-col md="2">
                   <v-text-field
@@ -356,7 +355,7 @@ export default {
       }
     },
     subtype() {
-      if (!this.currentSubtype) {
+      if (!this.subtype) {
         this.showDetails = false;
         this.details = "";
       } else {

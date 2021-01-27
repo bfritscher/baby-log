@@ -244,8 +244,6 @@ export default {
 
 // TODO: #8 FIX  daySummary reactivity bug
 
-// on timer highlight color
-
 // basic stats graphs
 // schedule graph icons for events without duration?
 // legends
