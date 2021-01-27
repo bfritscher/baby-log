@@ -271,16 +271,13 @@ export default {
       currentSubtype: undefined,
       nbDaysHistory: defaultNbDaysHistory,
       defaultNbDaysHistory,
-      localTimer: undefined
+      timer: undefined
     };
   },
   computed: {
     ...mapGetters(["typeLookup", "subtypeLookup"]),
     type() {
       return this.$store.state.ui.showTypeDialog;
-    },
-    timer() {
-      return this.localTimer;
     },
     subtype() {
       return (
@@ -360,7 +357,7 @@ export default {
         this.nbDaysHistory = this.defaultNbDaysHistory;
         setThemeColor("#333");
       } else {
-        this.localTimer = this.$store.state.timers.find((record) => {
+        this.timer = this.$store.state.timers.find((record) => {
           return record.type === this.type.id;
         });
         setThemeColor(this.type.colorDark);
@@ -415,7 +412,7 @@ export default {
       }
       const rxDocument = await this.$store.dispatch("createRecord", record);
       if (rxDocument.timer) {
-        this.localTimer = rxDocument;
+        this.timer = rxDocument;
       }
       this.currentSubtype = null;
       rxDocument.save();
@@ -430,8 +427,11 @@ export default {
         updates.unit = this.unit || "";
         updates.amount = this.amount || 0;
       }
-      this.localTimer = undefined;
-      this.timer.atomicPatch(updates);
+      const timer = this.timer;
+      this.timer = undefined;
+      this.$nextTick(() => {
+        timer.atomicPatch(updates);
+      });
     },
     close() {
       this.$store.commit("updateUI", { showTypeDialog: false });
