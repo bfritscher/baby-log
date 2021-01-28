@@ -380,9 +380,11 @@ export default {
       immediate: true
     },
     "$store.state.timers"() {
-      this.timer = this.$store.state.timers.find((record) => {
-        return record.type === this.type.id;
-      });
+      if (this.type) {
+        this.timer = this.$store.state.timers.find((record) => {
+          return record.type === this.type.id;
+        });
+      }
     },
     subtype: {
       handler() {
