@@ -309,9 +309,26 @@
         <v-subheader>About / Credits</v-subheader>
         <v-list>
           <v-list-item>
-            Icons designed by Freepik, bqlqn, Vitaly Gorbachev, Vectors Market,
-            Google, Those Icons, Good Ware, hirschwolf from Flaticon Application
-            inspired by Baby tracker - feeding, sleep and diaper from Amila
+            <v-list-item-content>
+              <v-list-item-title>
+                Version:
+                <a
+                  :href="`https://github.com/bfritscher/baby-log/commit/${commitHash}`"
+                  >{{ commitHash.substring(0, 8) }}</a
+                >
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider></v-divider>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title class="text-wrap">
+                Icons designed by: Freepik, bqlqn, Vitaly Gorbachev, Vectors
+                Market, Google, Those Icons, Good Ware, hirschwolf from Flaticon
+                Application inspired by Baby tracker - feeding, sleep and diaper
+                from Amila
+              </v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-card-text>
@@ -333,6 +350,8 @@ export default {
   },
   data() {
     return {
+      // eslint-disable-next-line
+      commitHash: COMMIT_HASH,
       dialog: false,
       showRemoteURL: false,
       remoteURL: this.$store.state.remoteURL,

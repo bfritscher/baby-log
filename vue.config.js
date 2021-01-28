@@ -1,4 +1,5 @@
 const { InjectManifest } = require("workbox-webpack-plugin");
+const webpack = require("webpack");
 
 const webpackPlugins = [];
 if (process.env.NODE_ENV === "production") {
@@ -13,7 +14,12 @@ if (process.env.NODE_ENV === "production") {
 module.exports = {
   transpileDependencies: ["vuetify"],
   configureWebpack: {
-    plugins: webpackPlugins
+    plugins: webpackPlugins.concat(
+      new webpack.DefinePlugin({
+        COMMIT_HASH: JSON.stringify(process.env.GITHUB_SHA || "dev")
+      }),
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+    )
   },
   publicPath: process.env.NODE_ENV === "production" ? "/baby-log/" : "/"
 };

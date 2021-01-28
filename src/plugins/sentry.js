@@ -6,6 +6,8 @@ import { Integrations } from "@sentry/tracing";
 if (process.env.NODE_ENV === "production") {
   Sentry.init({
     dsn: "https://e685ca32271d4359a4e723124ef77872@sentry.j42.org/19",
+    // eslint-disable-next-line
+    release: COMMIT_HASH,
     autoSessionTracking: true,
     integrations: [
       new VueIntegration({
