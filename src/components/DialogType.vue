@@ -365,6 +365,7 @@ export default {
           this.currentSubtype = undefined;
           this.nbDaysHistory = this.defaultNbDaysHistory;
           this.isLoading = true;
+          this.timer = undefined;
           setThemeColor("#333");
         } else {
           setTimeout(() => {
@@ -377,6 +378,11 @@ export default {
         }
       },
       immediate: true
+    },
+    "$store.state.timers"() {
+      this.timer = this.$store.state.timers.find((record) => {
+        return record.type === this.type.id;
+      });
     },
     subtype: {
       handler() {
