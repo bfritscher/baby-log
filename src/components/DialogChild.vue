@@ -16,6 +16,9 @@
             create ? "Add Child" : "Edit Child"
           }}</v-toolbar-title>
           <v-spacer></v-spacer>
+          <v-btn icon @click="remove()" v-if="!create">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
         </v-toolbar>
       </v-card-title>
       <v-card-text>
@@ -72,9 +75,6 @@
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-btn text @click="remove()" v-if="!create" color="error">
-          Delete
-        </v-btn>
         <v-spacer></v-spacer>
         <v-btn text @click="cancel()"> Cancel </v-btn>
         <v-btn color="primary" text @click="save()">{{

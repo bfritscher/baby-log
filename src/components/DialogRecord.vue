@@ -10,6 +10,9 @@
           type.name
         }}</v-toolbar-title>
         <v-spacer></v-spacer>
+        <v-btn @click="remove()" v-if="!create" icon>
+          <v-icon color="secondary">mdi-delete</v-icon>
+        </v-btn>
       </v-toolbar>
       <v-card-text>
         <v-container v-if="currentRecord">
@@ -102,9 +105,6 @@
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-btn text @click="remove()" v-if="!create" color="error">
-          Delete
-        </v-btn>
         <v-spacer></v-spacer>
         <v-btn text @click="cancel()"> Cancel </v-btn>
         <v-btn

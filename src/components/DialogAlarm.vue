@@ -9,15 +9,18 @@
         <v-toolbar-title class="secondary--text">{{
           create ? "Add Alarm" : "Edit Alarm"
         }}</v-toolbar-title>
-        <v-spacer></v-spacer>
         <v-switch
-          class="v-input--reverse"
+          class="pl-4"
           color="secondary"
           v-model="alarm.enabled"
           inset
           hide-details
           :label="alarm.enabled ? 'on' : 'off'"
         ></v-switch>
+        <v-spacer></v-spacer>
+        <v-btn icon @click="remove()" v-if="!create">
+          <v-icon color="secondary">mdi-delete</v-icon>
+        </v-btn>
       </v-toolbar>
       <v-card-text>
         <v-container v-if="alarm">
@@ -131,9 +134,6 @@
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-btn text @click="remove()" v-if="!create" color="error">
-          Delete
-        </v-btn>
         <v-spacer></v-spacer>
         <v-btn text @click="cancel()"> Cancel </v-btn>
         <v-btn color="primary" text @click="save()"> Save </v-btn>
