@@ -36,6 +36,7 @@ addRxPlugin(PouchdbAdapterHttp);
 
 import recordSchema from "../schemas/record";
 import childSchema from "../schemas/child";
+import { nanoid } from "nanoid";
 
 async function _create() {
   const db = await createRxDatabase({
@@ -63,10 +64,29 @@ async function _create() {
             round: true
           });
         }
+      },
+      migrationStrategies: {
+        1(d) {
+          return d;
+        }
       }
     },
     children: {
-      schema: childSchema
+      schema: childSchema,
+      migrationStrategies: {
+        1(d) {
+          return d;
+        },
+        2(d) {
+          d.alarms.forEach((a) => {
+            delete a.enable;
+            if (!a.id) {
+              a.id = nanoid();
+            }
+          });
+          return d;
+        }
+      }
     }
   });
   return db;

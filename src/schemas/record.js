@@ -1,7 +1,8 @@
 const schema = {
-  titel: "Record Schema",
+  titel: "record",
   description: "Record Schema",
-  version: 0,
+  version: 1,
+  keyCompression: false,
   type: "object",
   properties: {
     id: {

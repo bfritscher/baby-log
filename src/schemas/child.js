@@ -1,7 +1,8 @@
 const schema = {
-  titel: "Child Schema",
+  titel: "child",
   description: "Child Schema",
-  version: 0,
+  keyCompression: false,
+  version: 2,
   type: "object",
   properties: {
     id: {
