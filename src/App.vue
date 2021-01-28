@@ -38,6 +38,12 @@
     <dialog-type></dialog-type>
     <dialog-record></dialog-record>
     <dialog-alarm></dialog-alarm>
+    <v-main v-if="$store.state.children.length === 0 && !$store.state.loaded">
+      <v-progress-linear indeterminate></v-progress-linear>
+    </v-main>
+    <v-main v-if="$store.state.children.length === 0 && $store.state.loaded">
+      <v-container> add Child or sync url </v-container>
+    </v-main>
     <v-main v-if="$store.state.children.length > 0">
       <v-tabs-items
         v-model="tab"
@@ -57,9 +63,6 @@
           <calendar v-if="tab === '/calendar'"></calendar>
         </v-tab-item>
       </v-tabs-items>
-    </v-main>
-    <v-main v-if="$store.state.children.length === 0 && $store.state.loaded">
-      <v-container> add Child or sync url </v-container>
     </v-main>
   </v-app>
 </template>
