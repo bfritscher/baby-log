@@ -248,33 +248,4 @@ export default {
     }
   }
 };
-
-// TODO: #8 FIX  daySummary reactivity bug
-
-// basic stats graphs
-// schedule graph icons for events without duration?
-// legends
-
-// [future maybe]
-// readme captures
-// support category? other name? subsubtype?
-
-// notifications
-// https://developers.google.com/web/fundamentals/push-notifications/display-a-notification
-// server events /hooks
-// detect darkmode
-// notifications push?
-// poo colors?
-// custom initial values for amount
-// add src field to record? (import, username, other)
-// edit/order/hide types/subtypes
-// virtual list for better performance
-
-// more types/subtypes:
-// Toothbrushing
-// Doctor visit
-// Other?
-// milestones icon
-// list milestones based on age?
-// https://www.thebump.com/a/baby-milestone-chart
 </script>

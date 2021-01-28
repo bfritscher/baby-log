@@ -21,8 +21,6 @@
       </v-slide-item>
     </v-slide-group>
     <h2 class="subtitle-1 primary--text">{{ activeType.name }}</h2>
-    // statitics for last 7, 14, 30 day or custom // avg subtype count per day
-    // avg subtype duration per day
     <div v-if="activeType.id === 'GROWTH'">
       // TODO: #5 move/refactor test chart
       <canvas ref="chart" width="400" height="400"></canvas>
@@ -31,13 +29,10 @@
       <v-btn @click="zoom({ x: 18, y: 190, stepSize: 1.0 })">0-18</v-btn>
       <v-btn @click="test()">testdarkmode</v-btn>
     </div>
-    pattern by hours
-    <schedule-chart :type="activeType"></schedule-chart>
-    duration by day bar chart<br />
-    amount by day bar chart
 
-    <br />
-    special case growth
+    <h2>pattern by hours</h2>
+    <schedule-chart :type="activeType"></schedule-chart>
+    // TODO: #15 charts page
   </v-container>
 </template>
 <script>

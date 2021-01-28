@@ -283,6 +283,12 @@ const store = new Vuex.Store({
               name: "Vaccination",
               icon: "$syringe",
               askDetail: true
+            },
+            {
+              id: "HEALTH_CHECK",
+              name: "Check",
+              icon: "$stethoscope",
+              askDetail: true
             }
           ]
         }

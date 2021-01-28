@@ -20,6 +20,7 @@ import PumpR from "../components/icons/PumpR";
 import PumpB from "../components/icons/PumpB";
 import R from "../components/icons/R";
 import Ruler from "../components/icons/Ruler";
+import Stethoscope from "../components/icons/Stethoscope";
 import Stroller from "../components/icons/Stroller";
 import Syringe from "../components/icons/Syringe";
 import Thermometer from "../components/icons/Thermometer";
@@ -100,6 +101,9 @@ export default new Vuetify({
       },
       ruler: {
         component: Ruler
+      },
+      stethoscope: {
+        component: Stethoscope
       },
       stroller: {
         component: Stroller
