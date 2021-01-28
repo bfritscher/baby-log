@@ -470,7 +470,8 @@ const store = new Vuex.Store({
       if (
         data.subtype &&
         !data.toDate &&
-        context.getters.subtypeLookup[data.subtype].withTimer
+        context.getters.subtypeLookup[data.subtype].withTimer &&
+        !Object.prototype.hasOwnProperty.call(data, "timer")
       ) {
         data.timer = true;
       }

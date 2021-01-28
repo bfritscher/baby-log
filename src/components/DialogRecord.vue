@@ -220,6 +220,9 @@ export default {
         this.currentRecord.amount = undefined;
         this.currentRecord.unit = undefined;
       }
+      if (this.create) {
+        this.currentRecord.timer = undefined;
+      }
       this.$store.dispatch("upsertRecord", this.currentRecord);
       this.close();
     },
