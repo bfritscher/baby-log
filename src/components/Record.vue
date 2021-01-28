@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     ago() {
-      return moment(this.record.fromDate).fromNow();
+      return this.record ? moment(this.record.fromDate).fromNow() : "";
     }
   }
 };
