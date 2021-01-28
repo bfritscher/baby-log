@@ -202,6 +202,10 @@
                 fill-dot
                 small
                 :color="typeLookup[record.type].color"
+                v-ripple
+                @click.native.stop="
+                  $store.commit('updateUI', { showRecordDialog: record })
+                "
               >
                 <template v-slot:icon>
                   <v-icon
@@ -215,12 +219,7 @@
                   >
                   </v-icon>
                 </template>
-                <v-row
-                  class="pt-1 ml-n6"
-                  @click.stop="
-                    $store.commit('updateUI', { showRecordDialog: record })
-                  "
-                >
+                <v-row class="pt-1 ml-n6">
                   <v-col class="pa-2">
                     <strong>{{ record.time() }}</strong>
                     {{ subtypeLookup[record.subtype].name
