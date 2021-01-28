@@ -434,6 +434,7 @@ const store = new Vuex.Store({
     },
     setTimers(state, timers) {
       state.timers = timers;
+      navigator.setAppBadge(timers.length);
     },
     setChildren(state, children) {
       state.children = children;
