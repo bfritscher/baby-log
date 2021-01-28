@@ -88,9 +88,7 @@
             <v-list dense>
               <v-slide-x-reverse-transition group>
                 <v-list-item
-                  v-for="(alarm) in activeAlarms.filter(
-                    (a) => !clickedAlarms.includes(a)
-                  )"
+                  v-for="alarm in activeAlarms"
                   :key="alarm.id"
                   @click.stop="handleAlarmClick(alarm)"
                 >
@@ -216,18 +214,18 @@ export default {
     };
   },
   computed: {
-    ...mapGetters([
-      "typeLookup",
-      "subtypeLookup",
-      "activeAlarms",
-      "typesSorted"
-    ]),
+    ...mapGetters(["typeLookup", "subtypeLookup", "typesSorted"]),
+    activeAlarms() {
+      return this.$store.getters.activeAlarms.filter(
+        (a) => !this.clickedAlarms.includes(a)
+      );
+    },
     timers() {
       return this.$store.state.timers;
     }
   },
   methods: {
-    handleAlarmClick(alarm) {
+    async handleAlarmClick(alarm) {
       if (alarm.subtype) {
         const record = {
           type: alarm.type,
@@ -237,11 +235,11 @@ export default {
           record.details = alarm.details;
         }
         this.clickedAlarms.push(alarm);
-        this.$nextTick(async () => {
-          const rxDocument = await this.$store.dispatch("createRecord", record);
-          rxDocument.save();
+        const rxDocument = await this.$store.dispatch("createRecord", record);
+        await rxDocument.save();
+        setTimeout(async () => {
           this.clickedAlarms.splice(this.clickedAlarms.indexOf(alarm), 1);
-        });
+        }, 1000);
       } else {
         this.$store.commit("updateUI", {
           showTypeDialog: this.typeLookup[alarm.type]

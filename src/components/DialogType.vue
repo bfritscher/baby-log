@@ -178,6 +178,11 @@
         </div>
       </v-card-title>
       <v-card-text class="min-height">
+        <v-skeleton-loader
+          v-if="isLoading"
+          max-width="300"
+          type="article@3"
+        ></v-skeleton-loader>
         <div v-for="(day, i) in timelineRecordsPaged" :key="i">
           <p class="primary--text pt-3">{{ day.day }}</p>
           <v-timeline dense align-top class="pt-0 ml-n8">
@@ -241,7 +246,7 @@
           block
           text
           color="primary"
-          v-if="nbDaysHistory < timelineRecords.length"
+          v-if="!isLoading && nbDaysHistory < timelineRecords.length"
           @click="nbDaysHistory += defaultNbDaysHistory"
           >Load More</v-btn
         >
@@ -293,7 +298,9 @@ export default {
       return "";
     },
     timelineRecordsPaged() {
-      return this.isLoading ? [] : this.timelineRecords.slice(0, this.nbDaysHistory);
+      return this.isLoading
+        ? []
+        : this.timelineRecords.slice(0, this.nbDaysHistory);
     },
     timelineRecords() {
       if (this.type) {
@@ -361,7 +368,7 @@ export default {
       } else {
         setTimeout(() => {
           this.isLoading = false;
-        }, 300);
+        }, 500);
         this.timer = this.$store.state.timers.find((record) => {
           return record.type === this.type.id;
         });
