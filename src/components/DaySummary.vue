@@ -3,9 +3,7 @@
     <v-list-item
       v-for="group in dayGroup"
       :key="group.type"
-      @click.stop="
-        $store.commit('updateUI', { showTypeDialog: typeLookup[group.type] })
-      "
+      @click.stop="$store.commit('updateUI', { showTypeDialog: group.type })"
     >
       <v-list-item-icon class="my-1 mr-3">
         <v-icon

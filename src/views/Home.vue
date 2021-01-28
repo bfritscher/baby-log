@@ -7,7 +7,7 @@
             :color="type.color"
             depressed
             class="ma-1 px-md-12 px-lg-16 big-type"
-            @click.stop="$store.commit('updateUI', { showTypeDialog: type })"
+            @click.stop="$store.commit('updateUI', { showTypeDialog: type.id })"
           >
             <v-icon v-text="type.icon" color="secondary"></v-icon>
           </v-btn>
@@ -25,7 +25,7 @@
                 <v-list-item
                   @click.stop="
                     $store.commit('updateUI', {
-                      showTypeDialog: typeLookup[timer.type]
+                      showTypeDialog: timer.type
                     })
                   "
                 >
@@ -242,7 +242,7 @@ export default {
         }, 1000);
       } else {
         this.$store.commit("updateUI", {
-          showTypeDialog: this.typeLookup[alarm.type]
+          showTypeDialog: alarm.type
         });
       }
     }

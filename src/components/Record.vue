@@ -1,6 +1,6 @@
 <template>
   <v-list-item
-    @click.stop="$store.commit('updateUI', { showTypeDialog: type })"
+    @click.stop="$store.commit('updateUI', { showTypeDialog: type.id })"
   >
     <v-list-item-icon class="my-1 mr-3">
       <v-icon

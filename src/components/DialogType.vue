@@ -283,7 +283,7 @@ export default {
   computed: {
     ...mapGetters(["typeLookup", "subtypeLookup"]),
     type() {
-      return this.$store.state.ui.showTypeDialog;
+      return this.typeLookup[this.$store.state.ui.showTypeDialog];
     },
     subtype() {
       return (
@@ -358,33 +358,39 @@ export default {
     }
   },
   watch: {
-    type() {
-      if (!this.type) {
-        this.showDetails = false;
-        this.currentSubtype = undefined;
-        this.nbDaysHistory = this.defaultNbDaysHistory;
-        this.isLoading = true;
-        setThemeColor("#333");
-      } else {
-        setTimeout(() => {
-          this.isLoading = false;
-        }, 500);
-        this.timer = this.$store.state.timers.find((record) => {
-          return record.type === this.type.id;
-        });
-        setThemeColor(this.type.colorDark);
-      }
+    type: {
+      handler() {
+        if (!this.type) {
+          this.showDetails = false;
+          this.currentSubtype = undefined;
+          this.nbDaysHistory = this.defaultNbDaysHistory;
+          this.isLoading = true;
+          setThemeColor("#333");
+        } else {
+          setTimeout(() => {
+            this.isLoading = false;
+          }, 500);
+          this.timer = this.$store.state.timers.find((record) => {
+            return record.type === this.type.id;
+          });
+          setThemeColor(this.type.colorDark);
+        }
+      },
+      immediate: true
     },
-    subtype() {
-      if (!this.subtype) {
-        this.showDetails = false;
-        this.details = "";
-      } else {
-        this.amount = undefined;
-        this.unit = this.subtype
-          ? this.$store.state.config.units[this.subtype.unit]
-          : undefined;
-      }
+    subtype: {
+      handler() {
+        if (!this.subtype) {
+          this.showDetails = false;
+          this.details = "";
+        } else {
+          this.amount = undefined;
+          this.unit = this.subtype
+            ? this.$store.state.config.units[this.subtype.unit]
+            : undefined;
+        }
+      },
+      immediate: true
     }
   },
   methods: {

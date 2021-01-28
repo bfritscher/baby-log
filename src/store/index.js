@@ -12,6 +12,7 @@ const BABY_TRACKER_ACTIVE_CHILD_ID = "BABY_TRACKER_ACTIVE_CHILD_ID";
 const BABY_TRACKER_REMOTE_URL = "BABY_TRACKER_REMOTE_URL";
 const BABY_TRACKER_UNITS = "BABY_TRACKER_UNITS";
 const BABY_TRACKER_TYPES_ORDER = "BABY_TRACKER_TYPES_ORDER";
+const BABY_TRACKER_DIALOG_TYPE = "BABY_TRACKER_DIALOG_TYPE";
 
 const default_units = {
   weight: "kg",
@@ -39,7 +40,9 @@ try {
 const store = new Vuex.Store({
   state: {
     ui: {
-      showTypeDialog: false,
+      showTypeDialog: JSON.parse(
+        localStorage.getItem(BABY_TRACKER_DIALOG_TYPE) || "false"
+      ),
       showRecordDialog: false,
       showAlarmDialog: false,
       dialogMaxWidth: 600,
@@ -419,6 +422,12 @@ const store = new Vuex.Store({
   mutations: {
     updateUI(state, payload) {
       state.ui = Object.assign({}, state.ui, payload);
+      if (Object.prototype.hasOwnProperty.call(payload, "showTypeDialog")) {
+        localStorage.setItem(
+          BABY_TRACKER_DIALOG_TYPE,
+          JSON.stringify(payload.showTypeDialog)
+        );
+      }
     },
     setRecords(state, records) {
       state.records = records;
