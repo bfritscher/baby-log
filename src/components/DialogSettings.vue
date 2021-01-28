@@ -313,6 +313,7 @@
               <v-list-item-title>
                 Version:
                 <a
+                  target="_blank"
                   :href="`https://github.com/bfritscher/baby-log/commit/${commitHash}`"
                   >{{ commitHash.substring(0, 8) }}</a
                 >
