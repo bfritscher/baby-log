@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import { nanoid } from "nanoid";
+import chroma from "chroma-js";
 import moment from "moment";
 import DatabaseService from "../services/Database";
 import recordSchema from "../schemas/record";
@@ -62,9 +63,6 @@ const store = new Vuex.Store({
         volume: "mdi-water",
         temperature: "mdi-thermometer"
       }
-    },
-    user: {
-      id: "logged in id?"
     },
     loaded: false,
     activeChildId: localStorage.getItem(BABY_TRACKER_ACTIVE_CHILD_ID),
@@ -305,6 +303,25 @@ const store = new Vuex.Store({
     }
   },
   getters: {
+    subtypesColor(state) {
+      return state.config.types.reduce((subtypesColor, type) => {
+        const stopColor = chroma(
+          chroma(type.color).get("lch.h"),
+          24,
+          35,
+          "hcl"
+        ).hex();
+        const nb = type.subtypes.length;
+        const colors = chroma
+          .scale([type.color, stopColor])
+          .mode("lch")
+          .colors(nb);
+        return type.subtypes.reduce((subtypesColor, subtype, i) => {
+          subtypesColor[subtype.id] = colors[i];
+          return subtypesColor;
+        }, subtypesColor);
+      }, {});
+    },
     typeLookup(state) {
       return state.config.types.reduce((dict, type) => {
         dict[type.id] = type;
@@ -335,7 +352,9 @@ const store = new Vuex.Store({
       return typesSorted;
     },
     activeChild(state) {
-      return state.children.find((child) => child.id === state.activeChildId);
+      return (
+        state.children.find((child) => child.id === state.activeChildId) || {}
+      );
     },
     timers(state) {
       return state.records.filter((record) => record && record.timer);

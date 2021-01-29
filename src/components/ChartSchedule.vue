@@ -74,7 +74,6 @@ function draw(node, records) {
   const svg = d3
     .create("svg")
     .attr("viewBox", [0, 0, width, height])
-    .style("background", "white")
     .call(
       d3
         .zoom()
@@ -114,20 +113,35 @@ function draw(node, records) {
         : 3
     )
     .attr("height", y.bandwidth() - 1)
-    .attr("fill", (d) => this.typeLookup[d.type].color)
+    .attr("fill", (d) => {
+      if (this.type.id === "ALL") {
+        return this.typeLookup[d.type].color;
+      }
+      return this.subtypesColor[d.subtype];
+    })
     .append("title")
-    .text((d) => `${formatDate(d.fromDate)} ${d.type}`);
+    .text((d) => {
+      if (this.type.id === "ALL") {
+        return `${formatDate(d.fromDate)} ${d.type}`;
+      }
+      return `${formatDate(d.fromDate)} ${d.subtype}`;
+    });
   node.innerHTML = "";
   node.append(svg.node());
 }
 export default {
-  name: "ScheduleChart",
+  name: "ChartSchedule",
   props: ["type"],
   computed: {
-    ...mapGetters(["typeLookup"]),
+    ...mapGetters(["typeLookup", "subtypesColor"]),
     records() {
-      return this.$store.state.records.filter((r) =>
-        this.type.id === "ALL" ? true : r.type === this.type.id
+      return (
+        this.$store.state.records
+          .filter((r) =>
+            this.type.id === "ALL" ? true : r.type === this.type.id
+          )
+          // TODO: handle time range
+          .filter((r) => new Date(r.fromDate).getTime() < new Date().getTime())
       );
     }
   },
