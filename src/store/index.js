@@ -13,6 +13,7 @@ const BABY_TRACKER_REMOTE_URL = "BABY_TRACKER_REMOTE_URL";
 const BABY_TRACKER_UNITS = "BABY_TRACKER_UNITS";
 const BABY_TRACKER_TYPES_ORDER = "BABY_TRACKER_TYPES_ORDER";
 const BABY_TRACKER_DIALOG_TYPE = "BABY_TRACKER_DIALOG_TYPE";
+const BABY_TRACKER_DARK_MODE = "BABY_TRACKER_DARK_MODE";
 
 const default_units = {
   weight: "kg",
@@ -42,6 +43,14 @@ const store = new Vuex.Store({
     ui: {
       showTypeDialog: JSON.parse(
         localStorage.getItem(BABY_TRACKER_DIALOG_TYPE) || "false"
+      ),
+      darkMode: JSON.parse(
+        localStorage.getItem(BABY_TRACKER_DARK_MODE) ||
+          `${
+            window.matchMedia
+              ? window.matchMedia("(prefers-color-scheme: dark)").matches
+              : false
+          }`
       ),
       showRecordDialog: false,
       showAlarmDialog: false,
@@ -432,6 +441,12 @@ const store = new Vuex.Store({
         localStorage.setItem(
           BABY_TRACKER_DIALOG_TYPE,
           JSON.stringify(payload.showTypeDialog)
+        );
+      }
+      if (Object.prototype.hasOwnProperty.call(payload, "darkMode")) {
+        localStorage.setItem(
+          BABY_TRACKER_DARK_MODE,
+          JSON.stringify(payload.darkMode)
         );
       }
     },

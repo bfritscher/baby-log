@@ -22,5 +22,13 @@ new Vue({
   router,
   store,
   vuetify,
-  render: (h) => h(App)
+  render: (h) => h(App),
+  created() {
+    this.$vuetify.theme.dark = this.$store.state.ui.darkMode;
+  },
+  watch: {
+    "$store.state.ui.darkMode"() {
+      this.$vuetify.theme.dark = this.$store.state.ui.darkMode;
+    }
+  }
 }).$mount("#app");
