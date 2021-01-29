@@ -20,31 +20,64 @@
         </v-btn>
       </v-slide-item>
     </v-slide-group>
-    <h2 class="subtitle-1 primary--text">{{ activeType.name }}</h2>
-    <div v-if="activeType.id === 'GROWTH'">
-      // TODO: #5 move/refactor test chart
-      <canvas ref="chart" width="400" height="400"></canvas>
-      <v-btn @click="zoom({ x: 2, y: 95, stepSize: 0.1 })">0-2</v-btn>
-      <v-btn @click="zoom({ x: 3, y: 120, stepSize: 0.25 })">0-4</v-btn>
-      <v-btn @click="zoom({ x: 18, y: 190, stepSize: 1.0 })">0-18</v-btn>
-      <v-btn @click="test()">testdarkmode</v-btn>
-    </div>
+    <h2
+      class="primary--text mt-6 mb-3"
+      :style="{
+        color: activeType.id !== 'ALL' ? `${activeType.color} !important` : ''
+      }"
+    >
+      {{ activeType.name }}
+    </h2>
 
-    <h2>pattern by hours</h2>
-    <schedule-chart :type="activeType"></schedule-chart>
+    <v-row v-if="activeType.id === 'GROWTH'" class="mb-4">
+      <v-col v-if="!validChild">
+        <dialog-child :value="activeChild">
+          <v-alert type="info">
+            Add birthdate and gender to {{ activeChild.name }} to see height and weight charts.
+            <v-btn outlined>Add Now</v-btn>
+          </v-alert>
+        </dialog-child>
+      </v-col>
+      <v-col cols="12" md="6" v-if="validChild">
+        <chart-growth type="weight"></chart-growth>
+      </v-col>
+      <v-col cols="12" md="6" v-if="validChild">
+        <chart-growth type="height"></chart-growth>
+      </v-col>
+    </v-row>
+    <v-card outlined class="chart-schedule">
+      <v-card-title class="primary--text mb-2">
+        Schedule by hours
+      </v-card-title>
+      <v-card-subtitle>
+        <v-icon
+          class="type-icon mr-2"
+          v-for="subtype in activeType.subtypes"
+          v-text="subtype.icon"
+          color="secondary"
+          :style="{ 'background-color': subtypesColor[subtype.id] }"
+          :key="subtype.id"
+        ></v-icon>
+      </v-card-subtitle>
+      <v-card-text>
+        <chart-schedule :type="activeType"></chart-schedule>
+      </v-card-text>
+    </v-card>
     // TODO: #15 charts page
   </v-container>
 </template>
 <script>
-import Chart from "chart.js";
-import chartJsPluginZoom from "chartjs-plugin-zoom";
-Chart.plugins.unregister(chartJsPluginZoom);
-import ScheduleChart from "@/components/ScheduleChart";
+import { mapGetters } from "vuex";
+import ChartSchedule from "@/components/ChartSchedule";
+import ChartGrowth from "@/components/ChartGrowth.vue";
+import DialogChild from "@/components/DialogChild";
 
 export default {
   name: "Stats",
   components: {
-    ScheduleChart
+    ChartSchedule,
+    ChartGrowth,
+    DialogChild
   },
   data() {
     return {
@@ -53,6 +86,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["subtypesColor", "activeChild"]),
     activeType() {
       if (this.activeTypeIndex === undefined) {
         return {
@@ -61,169 +95,38 @@ export default {
         };
       }
       return this.$store.state.config.types[this.activeTypeIndex];
-    }
-  },
-  methods: {
-    test() {
-      Chart.defaults.global.defaultFontColor = "white";
-      Chart.defaults.global.defaultColor = "rgba(255, 255, 255, 0.2)";
-      this.chart.options.scales.xAxes.forEach((a) => {
-        a.gridLines.color = "rgba(255, 255, 255, 0.2)";
-      });
-      this.chart.options.scales.yAxes.forEach((a) => {
-        a.gridLines.color = "rgba(255, 255, 255, 0.2)";
-      });
-      this.chart.update();
     },
-    zoom(options) {
-      this.chart.options.scales.xAxes[0].ticks.max = options.x;
-      this.chart.options.scales.xAxes[0].ticks.stepSize = options.stepSize;
-      this.chart.options.scales.yAxes[0].ticks.max = options.y;
-      this.chart.options.scales.yAxes[1].ticks.max = options.y;
-      this.chart.update();
+    validChild() {
+      return (
+        this.activeChild &&
+        this.activeChild.birthdate &&
+        ["F", "M"].includes(this.activeChild.gender)
+      );
     }
   },
-  async mounted() {
-    /*
-    const data = await fetch("/growth_tables/girl_height.json").then((r) =>
-      r.json()
-    );
-    // TODO: #5 limits different inn weight or height
-    // TODO: #5 axis labels
-    this.chart = new Chart(this.$refs.chart, {
-      type: "scatter",
-      data: {
-        datasets: [
-          {
-            type: "line",
-            label: "Kid",
-            borderColor: "green",
-            borderWidth: 2,
-            fill: false,
-            data: [
-              {
-                x: 0,
-                y: 52
-              },
-              {
-                x: 0.25,
-                y: 55
-              },
-              {
-                x: 0.5,
-                y: 65
-              }
-            ]
-          },
-          {
-            type: "line",
-            label: "3rd",
-            borderColor: "red",
-            pointRadius: 0,
-            pointHitRadius: 0,
-            borderWidth: 1,
-            fill: false,
-            data: data.map((d) => {
-              return {
-                x: d.year,
-                y: d["3rd"]
-              };
-            })
-          },
-          {
-            type: "line",
-            label: "50th",
-            borderColor: "black",
-            fill: false,
-            pointRadius: 0,
-            pointHitRadius: 0,
-            borderWidth: 1,
-            data: data.map((d) => {
-              return {
-                x: d.year,
-                y: d["50th"]
-              };
-            })
-          },
-          {
-            yAxisID: "y-axis-2",
-            label: "97th",
-            type: "line",
-            borderColor: "blue",
-            fill: "-2",
-            pointRadius: 0,
-            pointHitRadius: 0,
-            borderWidth: 1,
-            data: data.map((d) => {
-              return {
-                x: d.year,
-                y: d["97th"]
-              };
-            })
-          }
-        ]
+  watch: {
+    activeType() {
+      const slug = this.activeType.id === "ALL" ? "" : `/${this.activeType.id}`;
+      const path = `/stats${slug}`;
+      if (path !== this.$route.path) {
+        this.$router.push(path);
+      }
+    },
+    $route: {
+      handler() {
+        const activeTypeIndex = this.$store.state.config.types
+          .map((type) => type.id)
+          .indexOf(this.$route.params.typeId);
+        this.activeTypeIndex =
+          activeTypeIndex === -1 ? undefined : activeTypeIndex;
       },
-      options: {
-        responsive: true,
-        scales: {
-          xAxes: [
-            {
-              ticks: {
-                max: 2,
-                min: 0,
-                stepSize: 0.1
-              }
-            }
-          ],
-          yAxes: [
-            {
-              ticks: {
-                max: 95,
-                min: 30
-              }
-            },
-            {
-              id: "y-axis-2",
-              position: "right",
-              ticks: {
-                max: 95,
-                min: 30
-              }
-            }
-          ]
-        },
-        plugins: {
-          zoom: {
-            pan: {
-              enabled: true,
-              mode: "xy",
-              rangeMin: {
-                x: 0,
-                y: 0
-              },
-              rangeMax: {
-                x: 18,
-                y: 190
-              }
-            },
-            zoom: {
-              enabled: true,
-              mode: "xy",
-              rangeMin: {
-                x: 0,
-                y: 0
-              },
-              rangeMax: {
-                x: 18,
-                y: 190
-              }
-            }
-          }
-        }
-      },
-      plugins: [chartJsPluginZoom]
-    });
-    */
+      immediate: true
+    }
   }
 };
 </script>
+<style scoped>
+.theme--dark.v-card.chart-schedule {
+  background: #424242 !important;
+}
+</style>

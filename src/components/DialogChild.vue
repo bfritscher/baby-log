@@ -87,6 +87,7 @@
 
 <script>
 import { isRxDocument } from "rxdb/plugins/core";
+import { MALE, FEMALE } from "@/schemas/child";
 
 export default {
   name: "DialogChild",
@@ -110,11 +111,11 @@ export default {
         },
         {
           text: "♂️ Boy",
-          value: "M"
+          value: MALE
         },
         {
           text: "♀️ Girl",
-          value: "F"
+          value: FEMALE
         }
       ]
     };

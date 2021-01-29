@@ -133,6 +133,10 @@ export default {
     transform: scale(1);
   }
 }
+.fill-width {
+  width: 100%;
+}
+
 .btn-icon {
   justify-content: left;
   text-transform: none;

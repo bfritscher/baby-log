@@ -7,7 +7,13 @@
     v-model="dialog"
   >
     <template v-slot:activator="{ on, attrs }">
-      <v-btn v-bind="attrs" v-on="on" depressed block color="primary"
+      <v-btn
+        v-bind="attrs"
+        v-on="on"
+        depressed
+        block
+        color="primary"
+        class="secondary--text"
         >All Logs</v-btn
       >
     </template>

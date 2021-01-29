@@ -9,7 +9,7 @@ const routes = [
     name: "Home"
   },
   {
-    path: "/stats",
+    path: "/stats/:typeId",
     name: "Stats"
   },
   {

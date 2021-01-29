@@ -56,3 +56,5 @@ const schema = {
 };
 
 export default schema;
+export const MALE = "M";
+export const FEMALE = "F";
