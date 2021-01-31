@@ -359,6 +359,7 @@ export default {
   watch: {
     type: {
       handler() {
+        let path = "/";
         if (!this.type) {
           this.showDetails = false;
           this.currentSubtype = undefined;
@@ -366,6 +367,9 @@ export default {
           this.isLoading = true;
           this.timer = undefined;
           setThemeColor("#333");
+          if (this.$route.path !== "/") {
+            this.$router.back();
+          }
         } else {
           setTimeout(() => {
             this.isLoading = false;
@@ -374,9 +378,30 @@ export default {
             return record.type === this.type.id;
           });
           setThemeColor(this.type.colorDark);
+          path += this.type.id;
+          if (this.$route.path !== path) {
+            this.$router.push(path);
+          }
         }
       },
       immediate: true
+    },
+    $route() {
+      if (this.$route.name === "Home") {
+        if (
+          this.$route.params.typeId &&
+          this.$route.params.typeId !== this.$store.state.ui.showTypeDialog
+        ) {
+          this.$store.commit("updateUI", {
+            showTypeDialog: this.$route.params.typeId
+          });
+        }
+      }
+      if (this.$route.path === "/" && this.$store.state.ui.showTypeDialog) {
+        this.$store.commit("updateUI", {
+          showTypeDialog: false
+        });
+      }
     },
     "$store.state.timers"() {
       if (this.type) {

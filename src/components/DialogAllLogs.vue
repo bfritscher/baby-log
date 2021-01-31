@@ -40,7 +40,7 @@
           </v-btn>
         </v-toolbar>
       </v-card-title>
-      <v-card-text>
+      <v-card-text class="min-height">
         <div v-for="(group, i) in groupedRecordsPaged" :key="i">
           <h2 class="primary--text subtitle-1">{{ group.day }}</h2>
           <v-list dense class="extra-dense mb-2">
@@ -173,3 +173,8 @@ export default {
   }
 };
 </script>
+<style scoped>
+.min-height {
+  min-height: 600px;
+}
+</style>
