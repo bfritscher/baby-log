@@ -5,6 +5,10 @@ Vue.use(VueRouter);
 
 const routes = [
   {
+    path: "/stats",
+    name: "Stats"
+  },
+  {
     path: "/stats/:typeId",
     name: "Stats"
   },
@@ -18,6 +22,10 @@ const routes = [
   },
   {
     path: "/:typeId",
+    name: "Type"
+  },
+  {
+    path: "/",
     name: "Home"
   }
 ];

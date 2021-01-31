@@ -367,7 +367,7 @@ export default {
           this.isLoading = true;
           this.timer = undefined;
           setThemeColor("#333");
-          if (this.$route.path !== "/") {
+          if (this.$route.name === "Type") {
             this.$router.back();
           }
         } else {
@@ -387,7 +387,7 @@ export default {
       immediate: true
     },
     $route() {
-      if (this.$route.name === "Home") {
+      if (this.$route.name === "Type") {
         if (
           this.$route.params.typeId &&
           this.$route.params.typeId !== this.$store.state.ui.showTypeDialog
