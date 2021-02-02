@@ -491,6 +491,6 @@ export default {
 </script>
 <style scoped>
 .min-height {
-  min-height: 600px;
+  min-height: 50vh;
 }
 </style>
