@@ -18,6 +18,8 @@ moment.relativeTimeThreshold("M", 12);
 
 Vue.config.productionTip = false;
 
+let refreshInterval;
+
 new Vue({
   router,
   store,
@@ -25,6 +27,23 @@ new Vue({
   render: (h) => h(App),
   created() {
     this.$vuetify.theme.dark = this.$store.state.ui.darkMode;
+    const clearRefresh = () => {
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
+      }
+    };
+    const refreshGetters = () => {
+      clearRefresh();
+      refreshInterval = setInterval(() => {
+        this.$store.commit("updateUI", {
+          lastUpdate: new Date().getTime()
+        });
+      }, 60000);
+    };
+
+    refreshGetters();
+    window.onfocus = refreshGetters;
+    window.onblur = clearRefresh;
   },
   watch: {
     "$store.state.ui.darkMode"() {
