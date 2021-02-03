@@ -317,7 +317,7 @@ export default {
         ];
 
         for (let record of filteredRecords) {
-          const currentDateTime = new Date(record.fromDate);
+          let currentDateTime = new Date(record.fromDate);
           if (
             currentDateTime.getFullYear() !== lastDateTime.getFullYear() ||
             currentDateTime.getMonth() !== lastDateTime.getMonth() ||
@@ -338,10 +338,15 @@ export default {
               records: dayRecords
             });
           }
-          const duration = lastDateTime - currentDateTime;
-          if (duration > 5 * 3600) {
+          let currentDateTimeEnd = currentDateTime;
+          if (record.toDate) {
+            currentDateTimeEnd = new Date(record.toDate);
+          }
+          const durationSinceEnd = lastDateTime - currentDateTimeEnd;
+          const durationSinceStart = lastDateTime - currentDateTime;
+          if (durationSinceEnd > 10 * 60 * 1000) {
             dayRecords.push({
-              durationBetween: humanizeDuration(duration, {
+              durationBetween: humanizeDuration(durationSinceStart, {
                 units: ["y", "mo", "w", "d", "h", "m"],
                 round: true
               })
