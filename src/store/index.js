@@ -356,9 +356,6 @@ const store = new Vuex.Store({
         state.children.find((child) => child.id === state.activeChildId) || {}
       );
     },
-    timers(state) {
-      return state.records.filter((record) => record && record.timer);
-    },
     latestActivityByType(state) {
       // based on hypothesis that records is already sorted desc and filtered by active child
       // latest record foreach type, stop when found one of each
@@ -407,6 +404,15 @@ const store = new Vuex.Store({
         }
         let latest;
         if (alarm.subtype && alarm.details) {
+          if (
+            state.timers.find(
+              (timer) =>
+                timer.subtype === alarm.subtype &&
+                timer.details === alarm.details
+            )
+          ) {
+            return activeAlarms;
+          }
           latest = state.records.find((record) => {
             return (
               record.subtype === alarm.subtype &&
@@ -414,8 +420,14 @@ const store = new Vuex.Store({
             );
           });
         } else if (alarm.subtype) {
+          if (state.timers.find((timer) => timer.subtype === alarm.subtype)) {
+            return activeAlarms;
+          }
           latest = getters.latestActivityBySubtype[alarm.subtype];
         } else {
+          if (state.timers.find((timer) => timer.type === alarm.type)) {
+            return activeAlarms;
+          }
           latest = getters.latestActivityByType[alarm.type];
         }
         if (!latest) {
