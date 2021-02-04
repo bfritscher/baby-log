@@ -22,8 +22,8 @@
           <span v-if="group.totalAmount > 0"
             >, {{ group.totalAmount }} ml
           </span>
-          <span v-for="subgroup in group.subtypes" :key="subgroup.subtype">
-            , {{ subgroup.count }} {{ subtypeLookup[subgroup.subtype].name }}
+          <span v-for="subgroup in group.subtypes" :key="subgroup.subtype"
+            >, {{ subgroup.count }} {{ subtypeLookup[subgroup.subtype].name }}
           </span>
         </v-list-item-title>
       </v-list-item-content>
