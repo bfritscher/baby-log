@@ -2,7 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import { nanoid } from "nanoid";
 import chroma from "chroma-js";
-import moment from "moment";
+import humanizeDuration from "humanize-duration";
 import DatabaseService from "../services/Database";
 import recordSchema from "../schemas/record";
 import childSchema from "../schemas/child";
@@ -432,7 +432,23 @@ const store = new Vuex.Store({
           if (state.timers.find((timer) => timer.type === alarm.type)) {
             return activeAlarms;
           }
-          latest = getters.latestActivityByType[alarm.type];
+
+          let latestActivity = null;
+          for (let i = 0; i < state.records.length; i++) {
+            const record = state.records[i];
+            if (!record || record.timer) continue;
+            if (record.type === alarm.type) {
+              if (latestActivity) {
+                const durationSinceEnd =
+                  new Date(latestActivity.fromDate) - new Date(record.toDate);
+                if (durationSinceEnd > 10 * 60 * 1000) {
+                  break;
+                }
+              }
+              latestActivity = record;
+            }
+          }
+          latest = latestActivity;
         }
         if (!latest) {
           activeAlarms.push(alarm);
@@ -440,9 +456,9 @@ const store = new Vuex.Store({
         }
         if (alarm.intervalType === "d") {
           const latestDay = new Date(latest.fromDate);
-          latestDay.setHours(0, 0, 0, 0, 0);
+          latestDay.setHours(0, 0, 0, 0);
           const todayDay = new Date();
-          todayDay.setHours(0, 0, 0, 0, 0);
+          todayDay.setHours(0, 0, 0, 0);
           const diffDays =
             (todayDay.getTime() - latestDay.getTime()) / (24 * 3600 * 1000);
           if (diffDays - alarm.intervalAmount >= 0) {
@@ -455,12 +471,14 @@ const store = new Vuex.Store({
             alarm.intervalAmount * 3600 * 1000 -
             new Date().getTime();
           alarm.durationToNext = durationToNext;
-          alarm.durationToNextText = moment
-            .duration(durationToNext)
-            .humanize(true);
+          alarm.durationToNextText =
+            "in " +
+            humanizeDuration(durationToNext, {
+              units: ["y", "mo", "w", "d", "h", "m"],
+              round: true
+            });
           if (alarm.durationToNext < 0) {
-            alarm.durationToNextText =
-              "Late by " + moment.duration(durationToNext).humanize();
+            alarm.durationToNextText = "Late by " + alarm.durationToNextText;
           }
 
           activeAlarms.push(alarm);
