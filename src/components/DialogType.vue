@@ -371,7 +371,7 @@ export default {
           this.nbDaysHistory = this.defaultNbDaysHistory;
           this.isLoading = true;
           this.timer = undefined;
-          setThemeColor("#333");
+          setThemeColor("#333333");
           if (this.$route.name === "Type") {
             this.$router.back();
           }

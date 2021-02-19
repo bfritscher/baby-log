@@ -20,6 +20,9 @@ Vue.config.productionTip = false;
 
 let refreshInterval;
 
+import { Capacitor, Plugins } from "@capacitor/core";
+const { SplashScreen } = Plugins;
+
 new Vue({
   router,
   store,
@@ -44,6 +47,11 @@ new Vue({
     refreshGetters();
     window.onfocus = refreshGetters;
     window.onblur = clearRefresh;
+  },
+  mounted() {
+    if (Capacitor.isNative) {
+      SplashScreen.hide();
+    }
   },
   watch: {
     "$store.state.ui.darkMode"() {

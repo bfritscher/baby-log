@@ -33,7 +33,8 @@
       <v-col v-if="!validChild">
         <dialog-child :value="activeChild">
           <v-alert type="info">
-            Add birthdate and gender to {{ activeChild.name }} to see height and weight charts.
+            Add birthdate and gender to {{ activeChild.name }} to see height and
+            weight charts.
             <v-btn outlined>Add Now</v-btn>
           </v-alert>
         </dialog-child>

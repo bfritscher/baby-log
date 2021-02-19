@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">baby-log</string>
+    <string name="title_activity_main">baby-log</string>
+    <string name="package_name">ch.fritscher.babylog</string>
+    <string name="custom_url_scheme">ch.fritscher.babylog</string>
+</resources>

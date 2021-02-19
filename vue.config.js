@@ -21,5 +21,9 @@ module.exports = {
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
     )
   },
-  publicPath: process.env.NODE_ENV === "production" ? "/baby-log/" : "/"
+  publicPath: process.env.BUID_CAP
+    ? ""
+    : process.env.NODE_ENV === "production"
+    ? "/baby-log/"
+    : "/"
 };

@@ -1,6 +1,6 @@
 import { Workbox, messageSW } from "workbox-window";
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production" && !process.env.BUID_CAP) {
   if ("serviceWorker" in navigator) {
     const wb = new Workbox(`${process.env.BASE_URL}service-worker.js`);
     let registration;
