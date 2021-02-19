@@ -216,6 +216,7 @@ export default {
   computed: {
     ...mapGetters(["typeLookup", "subtypeLookup", "typesSorted"]),
     activeAlarms() {
+      this.$store.state.ui.lastUpdate;
       return this.$store.getters.activeAlarms.filter(
         (a) => !this.clickedAlarms.includes(a)
       );

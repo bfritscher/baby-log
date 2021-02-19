@@ -37,11 +37,13 @@ new Vue({
     };
     const refreshGetters = () => {
       clearRefresh();
-      refreshInterval = setInterval(() => {
+      const updateInterval = () => {
         this.$store.commit("updateUI", {
           lastUpdate: new Date().getTime()
         });
-      }, 60000);
+      };
+      updateInterval();
+      refreshInterval = setInterval(updateInterval, 60000);
     };
 
     refreshGetters();
