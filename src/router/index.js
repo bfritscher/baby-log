@@ -10,7 +10,7 @@ const routes = [
   },
   {
     path: "/stats/:typeId",
-    name: "Stats"
+    name: "StatsDetail"
   },
   {
     path: "/calendar",
