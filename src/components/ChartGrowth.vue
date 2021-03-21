@@ -195,6 +195,12 @@ export default {
       this.chart.options.scales.yAxes[0].ticks.stepSize = options.stepSizeY;
       this.chart.options.scales.yAxes[1].ticks.max = options.y;
       this.chart.options.scales.yAxes[1].ticks.stepSize = options.stepSizeY;
+
+      this.chart.options.plugins.zoom.pan.rangeMax.x = options.x;
+      this.chart.options.plugins.zoom.zoom.rangeMax.x = options.x;
+      this.chart.options.plugins.zoom.pan.rangeMax.y = options.y;
+      this.chart.options.plugins.zoom.zoom.rangeMax.y = options.y;
+
       this.chart.update();
     },
     explore() {
@@ -361,11 +367,11 @@ export default {
                 mode: "xy",
                 rangeMin: {
                   x: 0,
-                  y: 0
+                  y: this.type == HEIGHT ? 30 : 0
                 },
                 rangeMax: {
-                  x: 18,
-                  y: this.type == HEIGHT ? 190 : 90
+                  x: this.chartOptions.x,
+                  y: this.chartOptions.y
                 }
               },
               zoom: {
@@ -373,11 +379,11 @@ export default {
                 mode: "xy",
                 rangeMin: {
                   x: 0,
-                  y: 0
+                  y: this.type == HEIGHT ? 30 : 0
                 },
                 rangeMax: {
-                  x: 18,
-                  y: this.type == HEIGHT ? 190 : 90
+                  x: this.chartOptions.x,
+                  y: this.chartOptions.y
                 }
               }
             }
