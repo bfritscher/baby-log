@@ -49,6 +49,7 @@
         v-model="tab"
         @change="updateRouter($event)"
         class="fill-height"
+        touchless
       >
         <v-tab-item value="/">
           <v-divider></v-divider>
