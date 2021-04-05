@@ -64,9 +64,9 @@
             </v-list-item-icon>
             <v-list-item-content>
               <div>
-                <strong>{{ record.time() }}</strong>
+                <strong>{{ time(record) }}</strong>
                 {{ subtypeLookup[record.subtype].name }}
-                <span v-if="record.toDate">, {{ record.duration() }}</span>
+                <span v-if="record.toDate">, {{ duration(record) }}</span>
                 <span
                   v-if="
                     subtypeLookup[record.subtype].withAmount && record.amount
@@ -91,6 +91,7 @@
 <script>
 import { mapGetters } from "vuex";
 import DaySummary from "@/components/DaySummary";
+import { time, duration } from "@/filters/recordFilters";
 
 export default {
   name: "Calendar",
@@ -134,6 +135,10 @@ export default {
       }
       return dayRecords;
     }
+  },
+  methods: {
+    time,
+    duration
   }
 };
 </script>

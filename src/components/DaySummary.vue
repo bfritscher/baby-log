@@ -67,9 +67,14 @@ export default {
         this.sub.unsubscribe();
       }
       const query = await this.$store.dispatch("getRecordsOfDay", this.day);
-      this.sub = query.$.subscribe((records) => {
-        this.dayGroup = groupRecords(records);
-      });
+      if (query.$) {
+        this.sub = query.$.subscribe((records) => {
+          this.dayGroup = groupRecords(records);
+        });
+      } else {
+        // liteMode returns result from DB
+        this.dayGroup = groupRecords(query);
+      }
     },
     duration(duration) {
       return moment.duration(duration).humanize();

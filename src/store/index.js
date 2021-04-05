@@ -15,6 +15,7 @@ const BABY_TRACKER_UNITS = "BABY_TRACKER_UNITS";
 const BABY_TRACKER_TYPES_ORDER = "BABY_TRACKER_TYPES_ORDER";
 const BABY_TRACKER_DIALOG_TYPE = "BABY_TRACKER_DIALOG_TYPE";
 const BABY_TRACKER_DARK_MODE = "BABY_TRACKER_DARK_MODE";
+const BABY_TRACKER_LITE_MODE = "BABY_TRACKER_LITE_MODE";
 
 const default_units = {
   weight: "kg",
@@ -53,6 +54,9 @@ const store = new Vuex.Store({
               ? window.matchMedia("(prefers-color-scheme: dark)").matches
               : false
           }`
+      ),
+      liteMode: JSON.parse(
+        localStorage.getItem(BABY_TRACKER_LITE_MODE) || "false"
       ),
       showRecordDialog: false,
       showAlarmDialog: false,
@@ -493,6 +497,12 @@ const store = new Vuex.Store({
           JSON.stringify(payload.showTypeDialog)
         );
       }
+      if (Object.prototype.hasOwnProperty.call(payload, "liteMode")) {
+        localStorage.setItem(
+          BABY_TRACKER_LITE_MODE,
+          JSON.stringify(payload.liteMode)
+        );
+      }
       if (Object.prototype.hasOwnProperty.call(payload, "darkMode")) {
         localStorage.setItem(
           BABY_TRACKER_DARK_MODE,
@@ -556,70 +566,124 @@ const store = new Vuex.Store({
       ) {
         data.timer = true;
       }
-
-      const db = await DatabaseService.get();
-      data.id = "id" + nanoid(); // because not allowed to start with _
-      data.childId = context.state.activeChildId;
-      return db.records.newDocument(data);
+      if (context.state.ui.liteMode) {
+        return {}; // TODO: fix
+      } else {
+        const db = await DatabaseService.get();
+        data.id = "id" + nanoid(); // because not allowed to start with _
+        data.childId = context.state.activeChildId;
+        return db.records.newDocument(data);
+      }
     },
     async upsertRecord(context, data) {
-      const db = await DatabaseService.get();
-      const filteredData = {};
-      for (let key in data) {
-        if (recordKeys.includes(key)) {
-          filteredData[key] = data[key] ? data[key] : undefined;
+      if (context.state.ui.liteMode) {
+        return {}; // TODO: fix
+      } else {
+        const db = await DatabaseService.get();
+        const filteredData = {};
+        for (let key in data) {
+          if (recordKeys.includes(key)) {
+            filteredData[key] = data[key] ? data[key] : undefined;
+          }
         }
+        return db.records.atomicUpsert(filteredData);
       }
-      return db.records.atomicUpsert(filteredData);
     },
     async removeRecord(context, data) {
-      const db = await DatabaseService.get();
-      return db.records
-        .findOne({
-          selector: { id: data.id }
-        })
-        .remove();
+      if (context.state.ui.liteMode) {
+        return; // TODO fix;
+      } else {
+        const db = await DatabaseService.get();
+        return db.records
+          .findOne({
+            selector: { id: data.id }
+          })
+          .remove();
+      }
     },
     async createChild(context, data) {
-      const db = await DatabaseService.get();
-      data.id = "id" + nanoid(); // because not allowed to start with _
-      return db.children.newDocument(data);
+      if (context.state.ui.liteMode) {
+        return {}; // TODO fix;
+      } else {
+        const db = await DatabaseService.get();
+        data.id = "id" + nanoid(); // because not allowed to start with _
+        return db.children.newDocument(data);
+      }
     },
     async upsertChild(context, data) {
-      const db = await DatabaseService.get();
-      const filteredData = {};
-      for (let key in data) {
-        if (childKeys.includes(key)) {
-          filteredData[key] = data[key] ? data[key] : undefined;
+      if (context.state.ui.liteMode) {
+        return {}; // TODO fix;
+      } else {
+        const db = await DatabaseService.get();
+        const filteredData = {};
+        for (let key in data) {
+          if (childKeys.includes(key)) {
+            filteredData[key] = data[key] ? data[key] : undefined;
+          }
         }
+        context.dispatch("setActiveChildId", filteredData.id);
+        return db.children.atomicUpsert(filteredData);
       }
-      context.dispatch("setActiveChildId", filteredData.id);
-      return db.children.atomicUpsert(filteredData);
     },
     async removeChild(context, data) {
-      const db = await DatabaseService.get();
-      return db.children
-        .findOne({
-          selector: { id: data.id }
-        })
-        .remove();
-      // TODO: #4 remove and purge records belonging to child
+      if (context.state.ui.liteMode) {
+        return; // TODO fix;
+      } else {
+        const db = await DatabaseService.get();
+        return db.children
+          .findOne({
+            selector: { id: data.id }
+          })
+          .remove();
+        // TODO: #4 remove and purge records belonging to child
+      }
     },
     setActiveChildId(context, id) {
       context.commit("setActiveChildId", id);
       context.dispatch("subscribeDB");
     },
     async getRecordsOfDay(context, day) {
-      const db = await DatabaseService.get();
-      return db.records.find({
-        selector: {
-          childId: context.state.activeChildId,
-          fromDate: { $regex: `${day.slice(0, 10)}.*` }
-        },
-        sort: [{ fromDate: "asc" }]
-      });
+      if (context.state.ui.liteMode) {
+
+        // TODO refactor
+        const authString = context.state.remoteURL.match(/\/\/(.*?)@/)[1];
+        const headers = new Headers();
+        headers.set("Authorization", "Basic " + btoa(authString));
+        headers.set("Content-Type", "application/json");
+        let url = context.state.remoteURL.replace(/\/\/(.*?)@/, "//");
+
+        const r = await fetch(`${url}-records/_find`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            selector: {
+              childId: {
+                $eq: context.state.activeChildId
+              },
+              fromDate: { $regex: `${day.slice(0, 10)}.*` }
+            },
+            limit: 99999,
+            sort: [{ fromDate: "asc" }]
+          })
+        });
+        const data = await r.json();
+        return data.docs;
+      } else {
+        const db = await DatabaseService.get();
+        return db.records.find({
+          selector: {
+            childId: context.state.activeChildId,
+            fromDate: { $regex: `${day.slice(0, 10)}.*` }
+          },
+          sort: [{ fromDate: "asc" }]
+        });
+      }
     },
     async subscribeDB(context) {
+      if (context.state.ui.liteMode) {
+        context.dispatch("sync");
+        return;
+      }
       const db = await DatabaseService.get();
       if (subRecords) {
         subRecords.unsubscribe();
@@ -667,6 +731,77 @@ const store = new Vuex.Store({
       context.dispatch("sync");
     },
     async sync(context) {
+      if (context.state.ui.liteMode) {
+        if (context.state.remoteURL) {
+          // TODO: listen to changes for realtime? https://docs.couchdb.org/en/latest/api/database/changes.html#changes-eventsource
+          // TODO: refactor
+          const authString = context.state.remoteURL.match(/\/\/(.*?)@/)[1];
+          const headers = new Headers();
+          headers.set("Authorization", "Basic " + btoa(authString));
+          headers.set("Content-Type", "application/json");
+          let url = context.state.remoteURL.replace(/\/\/(.*?)@/, "//");
+
+          fetch(`${url}-records/_find`, {
+            method: "POST",
+            headers,
+            body: JSON.stringify({
+              selector: {
+                childId: {
+                  $eq: context.state.activeChildId
+                }
+              },
+              limit: 99999,
+              sort: [{ fromDate: "desc" }]
+            })
+          })
+            .then((r) => r.json())
+            .then((data) => {
+              context.commit("setRecords", data.docs);
+            });
+
+          fetch(`${url}-children/_find`, {
+            method: "POST",
+            headers,
+            body: JSON.stringify({
+              selector: {},
+              sort: [{ name: "asc" }]
+            })
+          })
+            .then((r) => r.json())
+            .then((data) => {
+              context.commit(
+                "setChildren",
+                data.docs.map((c) => {
+                  c.id = c._id;
+                  return c;
+                })
+              );
+            });
+
+          fetch(`${url}-records/_find`, {
+            method: "POST",
+            headers,
+            body: JSON.stringify({
+              selector: {
+                childId: {
+                  $eq: context.state.activeChildId
+                },
+                timer: {
+                  $eq: true
+                }
+              },
+              limit: 99999,
+              sort: [{ fromDate: "desc" }],
+              use_index: "_design/idx-timers"
+            })
+          })
+            .then((r) => r.json())
+            .then((data) => {
+              context.commit("setTimers", data.docs);
+            });
+        }
+        return;
+      }
       const db = await DatabaseService.get();
       if (syncChildren) {
         syncChildren.cancel();

@@ -18,7 +18,7 @@
           >, {{ record.amount }}{{ record.unit }}</span
         >
         {{ record.details }}
-        <span v-if="subtype.withTimer">, {{ record.duration() }}</span>
+        <span v-if="subtype.withTimer">, {{ duration(record) }} </span>
       </v-list-item-title>
     </v-list-item-content>
   </v-list-item>
@@ -26,6 +26,7 @@
 
 <script>
 import moment from "moment";
+import { duration } from "@/filters/recordFilters";
 
 export default {
   name: "Record",
@@ -39,6 +40,7 @@ export default {
     }
   },
   methods: {
+    duration,
     ago() {
       return this.record ? moment(this.record.fromDate).fromNow() : "";
     }

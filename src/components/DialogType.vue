@@ -221,10 +221,10 @@
                 </template>
                 <v-row class="pt-1 ml-n6">
                   <v-col class="pa-2">
-                    <strong>{{ record.time() }}</strong>
+                    <strong>{{ time(record) }}</strong>
                     {{ subtypeLookup[record.subtype].name
                     }}<span v-if="record.toDate"
-                      >, {{ record.duration() }}
+                      >, {{ duration(record) }}
                     </span>
                     <span
                       v-if="
@@ -254,6 +254,7 @@ import humanizeDuration from "humanize-duration";
 import { mapGetters } from "vuex";
 import Timer from "@/components/Timer";
 import { setThemeColor } from "@/services/utils";
+import { time, duration } from "@/filters/recordFilters";
 
 export default {
   name: "DialogType",
@@ -291,7 +292,7 @@ export default {
         return this.$store.state.ui.unitsIcon[this.subtype.unit];
       }
       return "";
-    }
+    },
   },
   watch: {
     type: {
@@ -313,7 +314,7 @@ export default {
             this.loadTimeline().then(() => {
               this.isLoading = false;
             });
-          }, 300);
+          }, 200);
           this.timer = this.$store.state.timers.find((record) => {
             return record.type === this.type.id;
           });
@@ -350,6 +351,9 @@ export default {
         });
       }
     },
+    "$store.state.records"() {
+      this.loadTimeline();
+    },
     subtype: {
       handler() {
         if (!this.subtype) {
@@ -366,6 +370,8 @@ export default {
     }
   },
   methods: {
+    time,
+    duration,
     changeAmount(direction) {
       if (!this.amount) {
         this.amount = 0;

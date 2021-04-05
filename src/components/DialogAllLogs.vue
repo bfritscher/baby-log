@@ -64,9 +64,9 @@
               </v-list-item-icon>
               <v-list-item-content>
                 <div>
-                  <strong>{{ record.time() }}</strong>
+                  <strong>{{ time(record) }}</strong>
                   {{ subtypeLookup[record.subtype].name }}
-                  <span v-if="record.toDate">, {{ record.duration() }}</span>
+                  <span v-if="record.toDate">, {{ duration(record) }}</span>
                   <span
                     v-if="
                       subtypeLookup[record.subtype].withAmount && record.amount
@@ -99,6 +99,7 @@
 <script>
 import moment from "moment";
 import { mapGetters } from "vuex";
+import { time, duration } from "@/filters/recordFilters";
 
 export default {
   name: "DialogAllLogs",
@@ -156,6 +157,8 @@ export default {
     }
   },
   methods: {
+    time,
+    duration,
     toggleSelection(record) {
       const index = this.selection.indexOf(record);
       if (index >= 0) {

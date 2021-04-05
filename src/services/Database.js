@@ -1,6 +1,3 @@
-import moment from "moment";
-import humanizeDuration from "humanize-duration";
-
 import { createRxDatabase, addRxPlugin } from "rxdb/plugins/core";
 
 import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode";
@@ -43,28 +40,12 @@ async function _create() {
     name: "babytracker",
     adapter: "idb"
   });
+  console.log("RXDB created");
   window.db = db; // write to window for debugging
 
   await db.addCollections({
     records: {
       schema: recordSchema,
-      methods: {
-        time() {
-          return moment(this.fromDate).format("HH:mm");
-        },
-        durationRaw() {
-          return moment(this.toDate).diff(this.fromDate);
-        },
-        duration() {
-          if (!this.toDate) {
-            return "";
-          }
-          return humanizeDuration(this.durationRaw(), {
-            units: ["y", "mo", "w", "d", "h", "m"],
-            round: true
-          });
-        }
-      },
       migrationStrategies: {
         1(d) {
           return d;
@@ -93,8 +74,11 @@ async function _create() {
 }
 
 const DatabaseService = {
-  DB_CREATE_PROMISE: _create(),
+  DB_CREATE_PROMISE: undefined,
   get() {
+    if (!this.DB_CREATE_PROMISE) {
+      this.DB_CREATE_PROMISE = _create();
+    }
     return this.DB_CREATE_PROMISE;
   }
 };

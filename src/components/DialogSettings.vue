@@ -277,6 +277,18 @@
               <v-btn depressed large @click="sync()"> sync </v-btn>
             </v-list-item-action>
           </v-list-item>
+          <v-list-item>
+            <v-list-item-content>Lite Mode (requires server)</v-list-item-content>
+            <v-list-item-action>
+              <v-switch
+                :input-value="$store.state.ui.liteMode"
+                @change="$store.commit('updateUI', { liteMode: $event })"
+                inset
+                hide-details
+                color="accent"
+              ></v-switch>
+            </v-list-item-action>
+          </v-list-item>
         </v-list>
 
         <v-divider></v-divider>

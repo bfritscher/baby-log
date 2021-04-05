@@ -1,3 +1,5 @@
+import { durationRaw } from "../filters/recordFilters";
+
 function groupRecords(records) {
   return records.reduce((group, record) => {
     if (!Object.prototype.hasOwnProperty.call(group, record.type)) {
@@ -25,7 +27,7 @@ function groupRecords(records) {
     group[record.type].count += 1;
     group[record.type].subtypes[record.subtype].count += 1;
     if (record.toDate) {
-      const duration = record.durationRaw();
+      const duration = durationRaw(record);
       group[record.type].totalDuration += duration;
       group[record.type].subtypes[record.subtype].totalDuration += duration;
     }
