@@ -6,7 +6,9 @@ export function time(record) {
 }
 
 export function durationRaw(record) {
-  return moment(record.toDate).diff(record.fromDate);
+  return (
+    new Date(record.toDate).getTime() - new Date(record.fromDate).getTime()
+  );
 }
 
 export function duration(record) {
