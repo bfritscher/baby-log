@@ -7,7 +7,7 @@ import { mapGetters } from "vuex";
 
 function draw(node, records) {
   const data = records.map((r) => {
-    r = r.toJSON();
+    r = r.toJSON ? r.toJSON() : JSON.parse(JSON.stringify(r));
     r.fromDate = new Date(r.fromDate);
     if (r.toDate) {
       r.toDate = new Date(r.toDate);

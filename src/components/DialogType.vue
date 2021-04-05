@@ -179,7 +179,7 @@
       </v-card-title>
       <v-card-text class="min-height">
         <v-skeleton-loader
-          v-if="isLoading"
+          v-if="isLoading || timelineRecordsPaged.length === 0"
           max-width="300"
           type="article@3"
         ></v-skeleton-loader>
@@ -241,7 +241,12 @@
             </template>
           </v-timeline>
         </div>
-        <v-btn block text color="primary" v-if="!isLoading" @click="loadMore()"
+        <v-btn
+          block
+          text
+          color="primary"
+          v-if="!isLoading && timelineRecordsPaged.length > 0"
+          @click="loadMore()"
           >Load More</v-btn
         >
       </v-card-text>
@@ -292,7 +297,7 @@ export default {
         return this.$store.state.ui.unitsIcon[this.subtype.unit];
       }
       return "";
-    },
+    }
   },
   watch: {
     type: {
@@ -352,7 +357,9 @@ export default {
       }
     },
     "$store.state.records"() {
-      this.loadTimeline();
+      this.loadTimeline().then(() => {
+        this.isLoading = false;
+      });
     },
     subtype: {
       handler() {

@@ -512,6 +512,7 @@ const store = new Vuex.Store({
     },
     setRecords(state, records) {
       state.records = records;
+      state.loaded = true;
     },
     setTimers(state, timers) {
       state.timers = timers;
@@ -525,7 +526,6 @@ const store = new Vuex.Store({
       ) {
         state.activeChildId = children[0].id;
       }
-      state.loaded = true;
     },
     setActiveChildId(state, id) {
       state.activeChildId = id;

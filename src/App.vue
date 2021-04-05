@@ -44,7 +44,7 @@
     <v-main v-if="$store.state.children.length === 0 && $store.state.loaded">
       <v-container> add Child or sync url </v-container>
     </v-main>
-    <v-main v-if="$store.state.children.length > 0">
+    <v-main v-if="$store.state.children.length > 0 && $store.state.loaded">
       <v-tabs-items
         v-model="tab"
         @change="updateRouter($event)"
