@@ -79,6 +79,27 @@ export default {
       ],
       weight: [
         {
+          label: "0-90 days",
+          options: {
+            x: 0.25,
+            y: 10,
+            stepSize: 1 / 365,
+            xLabel: "Days",
+            stepSizeY: 0.05
+          }
+        },
+        {
+          label: "90-180 days",
+          options: {
+            xMin: 0.25,
+            x: 0.5,
+            y: 10,
+            stepSize: 1 / 365,
+            xLabel: "Days",
+            stepSizeY: 0.05
+          }
+        },
+        {
           label: "0-26 weeks",
           options: {
             x: 0.5,
@@ -166,7 +187,9 @@ export default {
   methods: {
     async getData() {
       const birthdateTime = new Date(
-        this.$store.getters.activeChild.birthdate
+        new Date(this.$store.getters.activeChild.birthdate)
+          .toISOString()
+          .substr(0, 10)
       ).getTime();
       this.data = await fetch(
         `./growth_tables/${this.gender}_${this.type}.json`
@@ -177,10 +200,12 @@ export default {
         .map((r) => {
           return {
             x:
-              Math.round(
-                (new Date(r.fromDate).getTime() - birthdateTime) /
-                  (10 * 3600 * 24 * 365)
-              ) / 100,
+              (new Date(
+                new Date(r.fromDate).toISOString().substr(0, 10)
+              ).getTime() -
+                birthdateTime) /
+              (3600 * 24 * 365) /
+              1000,
             y: r.amount
           };
         });
@@ -188,6 +213,7 @@ export default {
     },
     zoom(options) {
       this.chart.options.scales.xAxes[0].ticks.max = options.x;
+      this.chart.options.scales.xAxes[0].ticks.min = options.xMin || 0;
       this.chart.options.scales.xAxes[0].scaleLabel.labelString =
         options.xLabel;
       this.chart.options.scales.xAxes[0].ticks.stepSize = options.stepSize;
@@ -229,6 +255,9 @@ export default {
 
       const unit = this.type == HEIGHT ? "cm" : "kg";
       const valueToLabel = (value) => {
+        if (this.chartOptions.stepSize <= 1 / 365) {
+          return Math.round(value * 365);
+        }
         if (this.chartOptions.stepSize <= 1 / 52) {
           return Math.round(value * 52);
         }
