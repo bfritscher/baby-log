@@ -369,6 +369,7 @@ const store = new Vuex.Store({
     },
     latestActivityByType(state) {
       console.log("latestActivityByType");
+      if (state.ui.liteMode) return {};
       // based on hypothesis that records is already sorted desc and filtered by active child
       // latest record foreach type, stop when found one of each
       const latestActivities = {};
@@ -389,6 +390,7 @@ const store = new Vuex.Store({
     },
     latestActivityBySubtype(state, getters) {
       console.log("latestActivityBySubtype");
+      if (state.ui.liteMode) return {};
       // based on hypothesis that records is already sorted desc and filtered by active child
       // latest record foreach type, stop when found one of each
       const latestActivities = {};
@@ -411,6 +413,7 @@ const store = new Vuex.Store({
       return (getters.activeChild && getters.activeChild.alarms) || [];
     },
     activeAlarms(state, getters) {
+      if (state.ui.liteMode) return [];
       return getters.alarms.reduce((activeAlarms, alarm) => {
         if (!alarm.enabled) {
           return activeAlarms;

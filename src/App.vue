@@ -35,7 +35,7 @@
         </v-tabs>
       </template>
     </v-app-bar>
-    <dialog-type></dialog-type>
+    <dialog-type v-if="$store.state.loadedChildren && $store.state.loadedRecords"></dialog-type>
     <dialog-record></dialog-record>
     <dialog-alarm></dialog-alarm>
     <v-main v-if="$store.state.children.length === 0 && !$store.state.loadedRecords">

@@ -321,6 +321,7 @@ export default {
             );
             if (cache) {
               this.timelineRecordsPaged = JSON.parse(cache);
+              this.isLoading = false;
             }
             setTimeout(() => {
               this.loadTimeline().then(() => {
@@ -489,10 +490,12 @@ export default {
         this.type?.id,
         this.nbDaysHistory
       );
-      localStorage.setItem(
-        `BABY_TRACKER_${this.$store.state.activeChildId}_${this.type?.id}`,
-        JSON.stringify(this.timelineRecordsPaged)
-      );
+      if (this.timelineRecordsPaged.length > 0) {
+        localStorage.setItem(
+          `BABY_TRACKER_${this.$store.state.activeChildId}_${this.type?.id}`,
+          JSON.stringify(this.timelineRecordsPaged)
+        );
+      }
       /*
       }
       */

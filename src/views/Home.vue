@@ -178,7 +178,7 @@
                 </v-list-item-content>
               </v-list-item>
             </v-list>
-            <day-summary :day="today" class="pt-0"></day-summary>
+            <day-summary :day="today" class="pt-0" v-if="!$store.state.ui.liteMode"></day-summary>
           </v-card>
         </v-col>
         <v-col cols="12" md="6" lg="4" offset-lg="4">
