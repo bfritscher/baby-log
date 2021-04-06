@@ -6,6 +6,10 @@ import humanizeDuration from "humanize-duration";
 import DatabaseService from "../services/Database";
 import recordSchema from "../schemas/record";
 import childSchema from "../schemas/child";
+import {
+  getFromDBServer,
+  createProxyRecordObject
+} from "../services/liteModeApi";
 
 Vue.use(Vuex);
 
@@ -69,7 +73,8 @@ const store = new Vuex.Store({
         temperature: "mdi-thermometer"
       }
     },
-    loaded: false,
+    loadedRecords: false,
+    loadedChildren: false,
     activeChildId: localStorage.getItem(BABY_TRACKER_ACTIVE_CHILD_ID),
     remoteURL: localStorage.getItem(BABY_TRACKER_REMOTE_URL),
     syncStatus: {
@@ -343,6 +348,7 @@ const store = new Vuex.Store({
       }, {});
     },
     typesSorted(state) {
+      console.log("typesSorted");
       const typesSorted = [];
       const availableTypes = state.config.types.slice(0);
       state.config.typesOrder.forEach((typeId) => {
@@ -362,6 +368,7 @@ const store = new Vuex.Store({
       );
     },
     latestActivityByType(state) {
+      console.log("latestActivityByType");
       // based on hypothesis that records is already sorted desc and filtered by active child
       // latest record foreach type, stop when found one of each
       const latestActivities = {};
@@ -381,6 +388,7 @@ const store = new Vuex.Store({
       return latestActivities;
     },
     latestActivityBySubtype(state, getters) {
+      console.log("latestActivityBySubtype");
       // based on hypothesis that records is already sorted desc and filtered by active child
       // latest record foreach type, stop when found one of each
       const latestActivities = {};
@@ -512,7 +520,7 @@ const store = new Vuex.Store({
     },
     setRecords(state, records) {
       state.records = records;
-      state.loaded = true;
+      state.loadedRecords = true;
     },
     setTimers(state, timers) {
       state.timers = timers;
@@ -526,6 +534,7 @@ const store = new Vuex.Store({
       ) {
         state.activeChildId = children[0].id;
       }
+      state.loadedChildren = true;
     },
     setActiveChildId(state, id) {
       state.activeChildId = id;
@@ -566,12 +575,12 @@ const store = new Vuex.Store({
       ) {
         data.timer = true;
       }
+      data.id = "id" + nanoid(); // because not allowed to start with _
+      data.childId = context.state.activeChildId;
       if (context.state.ui.liteMode) {
-        return {}; // TODO: fix
+        return createProxyRecordObject(context.state.remoteURL, data);
       } else {
         const db = await DatabaseService.get();
-        data.id = "id" + nanoid(); // because not allowed to start with _
-        data.childId = context.state.activeChildId;
         return db.records.newDocument(data);
       }
     },
@@ -644,18 +653,10 @@ const store = new Vuex.Store({
     },
     async getRecordsOfDay(context, day) {
       if (context.state.ui.liteMode) {
-
-        // TODO refactor
-        const authString = context.state.remoteURL.match(/\/\/(.*?)@/)[1];
-        const headers = new Headers();
-        headers.set("Authorization", "Basic " + btoa(authString));
-        headers.set("Content-Type", "application/json");
-        let url = context.state.remoteURL.replace(/\/\/(.*?)@/, "//");
-
-        const r = await fetch(`${url}-records/_find`, {
-          method: "POST",
-          headers,
-          body: JSON.stringify({
+        const data = await getFromDBServer(
+          context.state.remoteURL,
+          "-records/_find",
+          {
             selector: {
               childId: {
                 $eq: context.state.activeChildId
@@ -664,9 +665,8 @@ const store = new Vuex.Store({
             },
             limit: 99999,
             sort: [{ fromDate: "asc" }]
-          })
-        });
-        const data = await r.json();
+          }
+        );
         return data.docs;
       } else {
         const db = await DatabaseService.get();
@@ -725,6 +725,9 @@ const store = new Vuex.Store({
         .$.subscribe((timers) => {
           context.commit("setTimers", timers);
         });
+      if (context.state.remoteURL) {
+        context.dispatch("sync");
+      }
     },
     setRemoteURL(context, url) {
       context.commit("setRemoteURL", url);
@@ -734,71 +737,51 @@ const store = new Vuex.Store({
       if (context.state.ui.liteMode) {
         if (context.state.remoteURL) {
           // TODO: listen to changes for realtime? https://docs.couchdb.org/en/latest/api/database/changes.html#changes-eventsource
-          // TODO: refactor
-          const authString = context.state.remoteURL.match(/\/\/(.*?)@/)[1];
-          const headers = new Headers();
-          headers.set("Authorization", "Basic " + btoa(authString));
-          headers.set("Content-Type", "application/json");
-          let url = context.state.remoteURL.replace(/\/\/(.*?)@/, "//");
+          getFromDBServer(context.state.remoteURL, "-records/_find", {
+            selector: {
+              childId: {
+                $eq: context.state.activeChildId
+              }
+            },
+            limit: 99999,
+            sort: [{ fromDate: "desc" }]
+          }).then((data) => {
+            context.commit("setRecords", data.docs);
+          });
 
-          fetch(`${url}-records/_find`, {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              selector: {
-                childId: {
-                  $eq: context.state.activeChildId
-                }
+          getFromDBServer(context.state.remoteURL, "-children/_find", {
+            selector: {},
+            sort: [{ name: "asc" }]
+          }).then((data) => {
+            context.commit(
+              "setChildren",
+              data.docs.map((c) => {
+                c.id = c._id;
+                return c;
+              })
+            );
+          });
+
+          getFromDBServer(context.state.remoteURL, "-records/_find", {
+            selector: {
+              childId: {
+                $eq: context.state.activeChildId
               },
-              limit: 99999,
-              sort: [{ fromDate: "desc" }]
-            })
-          })
-            .then((r) => r.json())
-            .then((data) => {
-              context.commit("setRecords", data.docs);
-            });
-
-          fetch(`${url}-children/_find`, {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              selector: {},
-              sort: [{ name: "asc" }]
-            })
-          })
-            .then((r) => r.json())
-            .then((data) => {
-              context.commit(
-                "setChildren",
-                data.docs.map((c) => {
-                  c.id = c._id;
-                  return c;
-                })
-              );
-            });
-
-          fetch(`${url}-records/_find`, {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              selector: {
-                childId: {
-                  $eq: context.state.activeChildId
-                },
-                timer: {
-                  $eq: true
-                }
-              },
-              limit: 99999,
-              sort: [{ fromDate: "desc" }],
-              use_index: "_design/idx-timers"
-            })
-          })
-            .then((r) => r.json())
-            .then((data) => {
-              context.commit("setTimers", data.docs);
-            });
+              timer: {
+                $eq: true
+              }
+            },
+            limit: 99999,
+            sort: [{ fromDate: "desc" }],
+            use_index: "_design/idx-timers"
+          }).then((data) => {
+            context.commit(
+              "setTimers",
+              data.docs.map((t) =>
+                createProxyRecordObject(context.state.remoteURL, t)
+              )
+            );
+          });
         }
         return;
       }
@@ -842,7 +825,4 @@ let subTimers;
 let syncChildren;
 let syncRecords;
 store.dispatch("subscribeDB");
-if (store.state.remoteURL) {
-  store.dispatch("sync");
-}
 export default store;

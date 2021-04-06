@@ -184,7 +184,7 @@ export default {
         return;
       }
       let value = this.value;
-      if (!isRxDocument(value)) {
+      if (!isRxDocument(value) && this.$store.state.ui.liteMode && !value._id) {
         // used to generate id
         if (value.type && !value.subtype) {
           const subtypes = this.$store.getters.typeLookup[
@@ -209,7 +209,7 @@ export default {
           details: "",
           category: ""
         },
-        value.toJSON()
+        value.toJSON ? value.toJSON() : JSON.parse(JSON.stringify(value))
       );
     },
     save() {
@@ -221,6 +221,7 @@ export default {
         this.currentRecord.unit = undefined;
       }
       if (this.create) {
+        // TODO lite mode?
         this.currentRecord.timer = undefined;
       }
       this.$store.dispatch("upsertRecord", this.currentRecord);

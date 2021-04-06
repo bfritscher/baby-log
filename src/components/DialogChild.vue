@@ -156,7 +156,7 @@ export default {
           name: "",
           alarms: []
         },
-        value.toJSON()
+        value.toJSON ? value.toJSON() : JSON.parse(JSON.stringify(value))
       );
     },
     save() {

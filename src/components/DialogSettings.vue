@@ -278,7 +278,9 @@
             </v-list-item-action>
           </v-list-item>
           <v-list-item>
-            <v-list-item-content>Lite Mode (requires server)</v-list-item-content>
+            <v-list-item-content
+              >Lite Mode (requires server)</v-list-item-content
+            >
             <v-list-item-action>
               <v-switch
                 :input-value="$store.state.ui.liteMode"

@@ -191,14 +191,14 @@
                 class="pb-1 ml-n10"
                 hide-dot
                 v-if="record.durationBetween"
-                :key="i"
+                :key="`b-${i}`"
               >
                 {{ record.durationBetween }}
               </v-timeline-item>
               <v-timeline-item
                 class="pb-1"
                 v-else
-                :key="i"
+                :key="`dot-${i}`"
                 fill-dot
                 small
                 :color="typeLookup[record.type].color"
@@ -254,12 +254,12 @@
   </v-dialog>
 </template>
 <script>
-import moment from "moment";
-import humanizeDuration from "humanize-duration";
 import { mapGetters } from "vuex";
 import Timer from "@/components/Timer";
 import { setThemeColor } from "@/services/utils";
 import { time, duration } from "@/filters/recordFilters";
+import createTimline from "@/services/timeline";
+// import { getFromApiServer } from "@/services/liteModeApi";
 
 export default {
   name: "DialogType",
@@ -315,11 +315,24 @@ export default {
             this.$router.back();
           }
         } else {
-          setTimeout(() => {
+          if (this.$store.state.ui.liteMode) {
+            const cache = localStorage.getItem(
+              `BABY_TRACKER_${this.$store.state.activeChildId}_${this.type?.id}`
+            );
+            if (cache) {
+              this.timelineRecordsPaged = JSON.parse(cache);
+            }
+            setTimeout(() => {
+              this.loadTimeline().then(() => {
+                this.isLoading = false;
+              }, 300);
+            });
+          } else {
             this.loadTimeline().then(() => {
               this.isLoading = false;
             });
-          }, 200);
+          }
+
           this.timer = this.$store.state.timers.find((record) => {
             return record.type === this.type.id;
           });
@@ -355,11 +368,6 @@ export default {
           return record.type === this.type.id;
         });
       }
-    },
-    "$store.state.records"() {
-      this.loadTimeline().then(() => {
-        this.isLoading = false;
-      });
     },
     subtype: {
       handler() {
@@ -416,6 +424,10 @@ export default {
       const rxDocument = await this.$store.dispatch("createRecord", record);
       if (rxDocument.timer) {
         this.timer = rxDocument;
+        this.$store.commit(
+          "setTimers",
+          this.$store.state.timers.concat([this.timer])
+        );
       }
       this.currentSubtype = null;
       rxDocument.save();
@@ -432,8 +444,21 @@ export default {
       }
       const timer = this.timer;
       this.timer = undefined;
-      this.$nextTick(() => {
-        timer.atomicPatch(updates);
+      const timerIds = this.$store.state.timers.map((t) =>
+        t.id ? t.id : t._id
+      );
+      const index = timerIds.indexOf(timer.id ? timer.id : timer._id);
+      if (index > -1) {
+        const timers = this.$store.state.timers.slice();
+        timers.splice(index, 1);
+        this.$store.commit("setTimers", timers);
+      }
+      timer.atomicPatch(updates).then(() => {
+        setTimeout(() => {
+          this.loadTimeline().then(() => {
+            this.isLoading = false;
+          }, 300);
+        });
       });
     },
     close() {
@@ -444,63 +469,33 @@ export default {
       this.loadTimeline();
     },
     async loadTimeline() {
-      let lastDateTime = new Date();
-      const today = new Date(new Date().toDateString());
-      let dayRecords = [];
-      const days = [
-        {
-          day: "Today",
-          records: dayRecords
-        }
-      ];
-
-      let dayNb = 0;
-      for (let record of this.$store.state.records) {
-        // skip if not same type
-        if (record.timer || record.type !== this.type?.id) continue;
-
-        let currentDateTime = new Date(record.fromDate);
-        if (
-          currentDateTime.getFullYear() !== lastDateTime.getFullYear() ||
-          currentDateTime.getMonth() !== lastDateTime.getMonth() ||
-          currentDateTime.getDate() !== lastDateTime.getDate()
-        ) {
-          dayNb++;
-          if (dayNb > this.nbDaysHistory) break;
-          const dateDiff = today - new Date(currentDateTime.toDateString());
-          let dateFormat = "Do MMMM, dddd";
-          if (today.getFullYear() !== currentDateTime.getFullYear()) {
-            dateFormat += " YYYY";
-          }
-          let day = moment(currentDateTime).format(dateFormat);
-          if (dateDiff === 24 * 3600 * 1000) {
-            day = "Yesterday";
-          }
-          dayRecords = [];
-          days.push({
-            day,
-            records: dayRecords
-          });
-        }
-        let currentDateTimeEnd = currentDateTime;
-        if (record.toDate) {
-          currentDateTimeEnd = new Date(record.toDate);
-        }
-        const durationSinceEnd = lastDateTime - currentDateTimeEnd;
-        const durationSinceStart = lastDateTime - currentDateTime;
-        if (durationSinceEnd > 10 * 60 * 1000) {
-          dayRecords.push({
-            durationBetween: humanizeDuration(durationSinceStart, {
-              units: ["y", "mo", "w", "d", "h", "m"],
-              round: true
-            })
-          });
-        }
-
-        dayRecords.push(record);
-        lastDateTime = currentDateTime;
+      /*
+      if (this.$store.state.ui.liteMode) {
+        getFromApiServer(
+          this.$store.state.remoteURL,
+          // TODO: make param
+          `https://baby-log-api.bf0.ch/timeline/${this.$store.state.activeChildId}/${this.type?.id}/${this.nbDaysHistory}`
+        ).then((data) => {
+          this.timelineRecordsPaged = data;
+          localStorage.setItem(
+            `BABY_TRACKER_${this.$store.state.activeChildId}_${this.type?.id}`,
+            JSON.stringify(this.timelineRecordsPaged)
+          );
+        });
+      } else {
+        */
+      this.timelineRecordsPaged = createTimline(
+        this.$store.state.records,
+        this.type?.id,
+        this.nbDaysHistory
+      );
+      localStorage.setItem(
+        `BABY_TRACKER_${this.$store.state.activeChildId}_${this.type?.id}`,
+        JSON.stringify(this.timelineRecordsPaged)
+      );
+      /*
       }
-      this.timelineRecordsPaged = days.filter((d) => d.records.length > 0);
+      */
     }
   }
 };
