@@ -46,25 +46,39 @@ function fixId(data) {
   }
 }
 
-export function createProxyRecordObject(remoteURL, data) {
+export function createProxyRecordObject(store, originalData) {
   const record = Object.assign(
     {
       save() {
         const data = Object.assign({}, this);
         fixId(data);
-        return sendToDbServer(remoteURL, `-records/${data._id}`, data).then(
-          (r) => {
-            this._rev = r.rev;
-          }
-        );
+        store.commit("setRecords", [this].concat(store.state.records));
+        return sendToDbServer(
+          store.state.remoteURL,
+          `-records/${data._id}`,
+          data
+        ).then((r) => {
+          this._rev = r.rev;
+        });
       },
       atomicPatch(update) {
         const data = Object.assign({}, this, update);
         fixId(data);
-        return sendToDbServer(remoteURL, `-records/${data._id}`, data);
+        return sendToDbServer(
+          store.state.remoteURL,
+          `-records/${data._id}`,
+          data
+        ).then(() => {
+          Object.assign(
+            store.state.records.find(
+              (r) => r.id === data._id || r._id === data._id
+            ),
+            update
+          );
+        });
       }
     },
-    data
+    originalData
   );
   return record;
 }

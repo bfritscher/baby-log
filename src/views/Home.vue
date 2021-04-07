@@ -16,7 +16,7 @@
     </v-container>
     <v-divider></v-divider>
 
-    <v-container>
+    <v-container v-if="showHome">
       <v-row v-if="timers && timers.length > 0">
         <v-col cols="12" md="6" lg="4">
           <v-card class="my-2" outlined>
@@ -178,7 +178,7 @@
                 </v-list-item-content>
               </v-list-item>
             </v-list>
-            <day-summary :day="today" class="pt-0" v-if="!$store.state.ui.liteMode"></day-summary>
+            <day-summary :day="today" class="pt-0"></day-summary>
           </v-card>
         </v-col>
         <v-col cols="12" md="6" lg="4" offset-lg="4">
@@ -222,6 +222,9 @@ export default {
     },
     timers() {
       return this.$store.state.timers;
+    },
+    showHome() {
+      return !this.$store.state.ui.liteMode || this.$route.name === "Home";
     }
   },
   methods: {

@@ -1,7 +1,13 @@
 import { durationRaw } from "../filters/recordFilters";
+import * as Sentry from "@sentry/browser";
 
 function groupRecords(records) {
-  return records.reduce((group, record) => {
+  console.log("groupRecords");
+  const transaction = Sentry.startTransaction({
+    name: "groupRecords"
+  });
+  const span = transaction.startChild({ op: "groupRecords" });
+  const groupedRecords = records.reduce((group, record) => {
     if (!Object.prototype.hasOwnProperty.call(group, record.type)) {
       group[record.type] = {
         type: record.type,
@@ -37,6 +43,9 @@ function groupRecords(records) {
     }
     return group;
   }, {});
+  span.finish();
+  transaction.finish();
+  return groupedRecords;
 }
 
 export default groupRecords;

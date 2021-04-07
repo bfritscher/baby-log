@@ -301,7 +301,9 @@ export default {
   },
   watch: {
     type: {
-      handler() {
+      handler(newVal, oldVal) {
+        if (newVal === oldVal) return;
+        console.log("watchType");
         let path = "/";
         if (!this.type) {
           this.showDetails = false;
@@ -431,7 +433,15 @@ export default {
         );
       }
       this.currentSubtype = null;
-      rxDocument.save();
+      rxDocument.save().then(() => {
+        if (this.$store.state.ui.liteMode) {
+          setTimeout(() => {
+            this.loadTimeline().then(() => {
+              this.isLoading = false;
+            }, 300);
+          });
+        }
+      });
     },
     endTimer() {
       const updates = {
@@ -455,11 +465,13 @@ export default {
         this.$store.commit("setTimers", timers);
       }
       timer.atomicPatch(updates).then(() => {
-        setTimeout(() => {
-          this.loadTimeline().then(() => {
-            this.isLoading = false;
-          }, 300);
-        });
+        if (this.$store.state.ui.liteMode) {
+          setTimeout(() => {
+            this.loadTimeline().then(() => {
+              this.isLoading = false;
+            }, 300);
+          });
+        }
       });
     },
     close() {
@@ -470,6 +482,7 @@ export default {
       this.loadTimeline();
     },
     async loadTimeline() {
+      console.log("loadTimeline");
       /*
       if (this.$store.state.ui.liteMode) {
         getFromApiServer(

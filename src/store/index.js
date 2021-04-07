@@ -6,6 +6,7 @@ import humanizeDuration from "humanize-duration";
 import DatabaseService from "../services/Database";
 import recordSchema from "../schemas/record";
 import childSchema from "../schemas/child";
+import * as Sentry from "@sentry/browser";
 import {
   getFromDBServer,
   createProxyRecordObject
@@ -369,14 +370,21 @@ const store = new Vuex.Store({
     },
     latestActivityByType(state) {
       console.log("latestActivityByType");
-      if (state.ui.liteMode) return {};
+      const transaction = Sentry.startTransaction({
+        name: "latestActivityByType"
+      });
+      const span = transaction.startChild({ op: "latestActivityByType" });
       // based on hypothesis that records is already sorted desc and filtered by active child
       // latest record foreach type, stop when found one of each
+      const minDate = new Date(
+        new Date().getTime() - 1000 * 3600 * 24 * 31
+      ).toISOString();
       const latestActivities = {};
       const notSeenTypes = state.config.types.map((type) => type.id);
       for (let i = 0; i < state.records.length; i++) {
         const record = state.records[i];
         if (!record || record.timer) continue;
+        if (record.fromDate < minDate) break;
         const index = notSeenTypes.indexOf(record.type);
         if (index >= 0) {
           latestActivities[record.type] = record;
@@ -386,18 +394,27 @@ const store = new Vuex.Store({
           }
         }
       }
+      span.finish();
+      transaction.finish();
       return latestActivities;
     },
     latestActivityBySubtype(state, getters) {
       console.log("latestActivityBySubtype");
-      if (state.ui.liteMode) return {};
+      const transaction = Sentry.startTransaction({
+        name: "latestActivityBySubtype"
+      });
+      const span = transaction.startChild({ op: "latestActivityBySubtype" });
       // based on hypothesis that records is already sorted desc and filtered by active child
       // latest record foreach type, stop when found one of each
+      const minDate = new Date(
+        new Date().getTime() - 1000 * 3600 * 24 * 31
+      ).toISOString();
       const latestActivities = {};
       const notSeenSubtypes = Object.keys(getters.subtypeLookup);
       for (let i = 0; i < state.records.length; i++) {
         const record = state.records[i];
         if (!record || record.timer) continue;
+        if (record.fromDate < minDate) break;
         const index = notSeenSubtypes.indexOf(record.subtype);
         if (index >= 0) {
           latestActivities[record.subtype] = record;
@@ -407,14 +424,19 @@ const store = new Vuex.Store({
           }
         }
       }
+      span.finish();
+      transaction.finish();
       return latestActivities;
     },
     alarms(state, getters) {
       return (getters.activeChild && getters.activeChild.alarms) || [];
     },
     activeAlarms(state, getters) {
-      if (state.ui.liteMode) return [];
-      return getters.alarms.reduce((activeAlarms, alarm) => {
+      const transaction = Sentry.startTransaction({
+        name: "activeAlarms"
+      });
+      const span = transaction.startChild({ op: "activeAlarms" });
+      const activeAlarms = getters.alarms.reduce((activeAlarms, alarm) => {
         if (!alarm.enabled) {
           return activeAlarms;
         }
@@ -497,6 +519,11 @@ const store = new Vuex.Store({
         }
         return activeAlarms;
       }, []);
+
+
+      span.finish();
+      transaction.finish();
+      return activeAlarms
     }
   },
   mutations: {
@@ -581,7 +608,7 @@ const store = new Vuex.Store({
       data.id = "id" + nanoid(); // because not allowed to start with _
       data.childId = context.state.activeChildId;
       if (context.state.ui.liteMode) {
-        return createProxyRecordObject(context.state.remoteURL, data);
+        return createProxyRecordObject(context, data);
       } else {
         const db = await DatabaseService.get();
         return db.records.newDocument(data);
@@ -781,7 +808,7 @@ const store = new Vuex.Store({
             context.commit(
               "setTimers",
               data.docs.map((t) =>
-                createProxyRecordObject(context.state.remoteURL, t)
+                createProxyRecordObject(context, t)
               )
             );
           });
