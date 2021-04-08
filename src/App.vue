@@ -35,16 +35,28 @@
         </v-tabs>
       </template>
     </v-app-bar>
-    <dialog-type v-if="$store.state.loadedChildren && $store.state.loadedRecords"></dialog-type>
+    <dialog-type
+      v-if="$store.state.loadedChildren && $store.state.loadedRecords"
+    ></dialog-type>
     <dialog-record></dialog-record>
     <dialog-alarm></dialog-alarm>
-    <v-main v-if="$store.state.children.length === 0 && !$store.state.loadedRecords">
+    <v-main
+      v-if="$store.state.children.length === 0 && !$store.state.loadedRecords"
+    >
       <v-progress-linear indeterminate></v-progress-linear>
     </v-main>
-    <v-main v-if="$store.state.children.length === 0 && $store.state.loadedChildren">
+    <v-main
+      v-if="$store.state.children.length === 0 && $store.state.loadedChildren"
+    >
       <v-container> add Child or sync url </v-container>
     </v-main>
-    <v-main v-if="$store.state.children.length > 0 && $store.state.loadedChildren && $store.state.loadedRecords">
+    <v-main
+      v-if="
+        $store.state.children.length > 0 &&
+        $store.state.loadedChildren &&
+        $store.state.loadedRecords
+      "
+    >
       <v-tabs-items
         v-model="tab"
         @change="updateRouter($event)"

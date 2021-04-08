@@ -520,10 +520,9 @@ const store = new Vuex.Store({
         return activeAlarms;
       }, []);
 
-
       span.finish();
       transaction.finish();
-      return activeAlarms
+      return activeAlarms;
     }
   },
   mutations: {
@@ -807,9 +806,7 @@ const store = new Vuex.Store({
           }).then((data) => {
             context.commit(
               "setTimers",
-              data.docs.map((t) =>
-                createProxyRecordObject(context, t)
-              )
+              data.docs.map((t) => createProxyRecordObject(context, t))
             );
           });
         }
