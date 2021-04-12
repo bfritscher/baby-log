@@ -180,7 +180,9 @@ export default {
       chart: undefined,
       childData: [],
       // TODO: #16 GrowthChart select default Zoom level based on age
-      selectedZoomOption: 0,
+      selectedZoomOption: JSON.parse(
+        localStorage.getItem(`baby_tracker_zoom_option_${this.type}`) || "0"
+      ),
       zoomLevels
     };
   },
@@ -209,6 +211,10 @@ export default {
   watch: {
     selectedZoomOption: {
       handler() {
+        localStorage.setItem(
+          `baby_tracker_zoom_option_${this.type}`,
+          JSON.stringify(this.selectedZoomOption)
+        );
         this.zoom(this.chartOptions);
       },
       immediate: false
