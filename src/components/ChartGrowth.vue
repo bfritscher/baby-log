@@ -8,7 +8,32 @@
       }}</v-btn>
     </v-card-title>
     <v-card-text>
-      <canvas ref="chart" width="400" height="400"></canvas>
+      <v-simple-table
+        height="500"
+        fixed-header
+        v-if="selectedZoomOption === zoomLevels[type].length - 1"
+      >
+        <template v-slot:default>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th class="text-right">{{ unit }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="d in childData" :key="d.src.fromDate">
+              <td>{{ formatDate(d.src.fromDate) }}</td>
+              <td class="text-right">{{ d.y }}</td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
+      <canvas
+        ref="chart"
+        width="400"
+        height="400"
+        v-show="selectedZoomOption !== zoomLevels[type].length - 1"
+      ></canvas>
     </v-card-text>
     <v-card-actions>
       <v-btn-toggle
@@ -75,6 +100,10 @@ export default {
             xLabel: "years",
             stepSizeY: 10
           }
+        },
+        {
+          label: "table",
+          options: {}
         }
       ],
       weight: [
@@ -138,6 +167,10 @@ export default {
             xLabel: "years",
             stepSizeY: 5.0
           }
+        },
+        {
+          label: "table",
+          options: {}
         }
       ]
     };
@@ -168,6 +201,9 @@ export default {
     },
     chartOptions() {
       return this.zoomLevels[this.type][this.selectedZoomOption].options;
+    },
+    unit() {
+      return this.type == HEIGHT ? "cm" : "kg";
     }
   },
   watch: {
@@ -206,10 +242,18 @@ export default {
                 birthdateTime) /
               (3600 * 24 * 365) /
               1000,
-            y: r.amount
+            y: r.amount,
+            src: r
           };
         });
       this.draw();
+    },
+    formatDate(date) {
+      const dateObj = new Date(date);
+
+      return `${String(dateObj.getDate()).padStart(2, "0")}.${String(
+        dateObj.getMonth() + 1
+      ).padStart(2, "0")}.${dateObj.getFullYear()}`;
     },
     zoom(options) {
       this.chart.options.scales.xAxes[0].ticks.max = options.x;
@@ -253,7 +297,6 @@ export default {
         gridLinesColor = "rgba(0, 0, 0, 0.1)";
       }
 
-      const unit = this.type == HEIGHT ? "cm" : "kg";
       const valueToLabel = (value) => {
         if (this.chartOptions.stepSize <= 1 / 365) {
           return Math.round(value * 365);
@@ -336,7 +379,7 @@ export default {
           tooltips: {
             callbacks: {
               label(tooltipItem) {
-                return `${tooltipItem.value} ${unit} @ ${valueToLabel(
+                return `${tooltipItem.value} ${this.unit} @ ${valueToLabel(
                   tooltipItem.label
                 )}`;
               }
@@ -364,7 +407,7 @@ export default {
               {
                 scaleLabel: {
                   display: true,
-                  labelString: unit
+                  labelString: this.unit
                 },
                 ticks: {
                   stepSize: this.chartOptions.stepSizeY,
